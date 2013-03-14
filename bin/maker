@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/maker'
+
+file = ARGV.first
+
+Maker.run do
+  load file
+  run_commands
+end
