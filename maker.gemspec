@@ -19,8 +19,7 @@ Gem::Specification.new do |s|
   %w[
     blockenspiel
     colorize
-    net-scp
-    open4
+    net-ssh-simple
   ].each(&s.method(:add_dependency))
 
   s.add_development_dependency 'bundler', '>= 1.0.1'
