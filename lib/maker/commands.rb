@@ -3,10 +3,6 @@ require 'net/scp'
 
 class Maker
   module Commands
-    def shell(cmd)
-      @commands << cmd
-    end
-
     def subversion(
       repo: repo,
       dest: dest,
