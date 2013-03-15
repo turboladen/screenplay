@@ -9,7 +9,8 @@ class Maker
         state: :installed,
         update: false,
         prefix: '/usr/local/bin/brew',
-        force: false)
+        force: false
+      )
         super(ssh, host)
 
         action = case state
