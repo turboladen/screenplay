@@ -6,5 +6,5 @@ file = ARGV.first
 
 Maker::Runner.run do
   load file
-  run_commands
+  act
 end

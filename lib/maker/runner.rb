@@ -14,7 +14,7 @@ class Maker
     end
 
     def initialize
-      @commands = []
+      @actions = []
 
       @config = {
         user: Etc.getlogin,
@@ -35,7 +35,7 @@ class Maker
         super
       else
         klass = Maker::Actions.const_get(action)
-        @commands << klass.new(ssh, @config[:host], *args, &block)
+        @actions << klass.new(ssh, @config[:host], *args, &block)
       end
     end
 
@@ -88,14 +88,14 @@ class Maker
       abort(error.red)
     end
 
-    def run_commands
+    def act
       abort('Must use Ruby 2.0.0 or greater with maker.') if RUBY_VERSION < '2.0.0'
       start_time = Time.now
       puts "config: #{@config}"
       puts "ssh options: #{ssh_options}"
-      puts "Executing commands on host '#{@config[:host]}'".blue
+      puts "Executing action on host '#{@config[:host]}'".blue
 
-      @commands.each do |cmd|
+      @actions.each do |cmd|
         puts "Running command: '#{cmd.command}'".blue
         outcome = cmd.run
 
