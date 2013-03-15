@@ -2,14 +2,12 @@ require 'etc'
 require 'blockenspiel'
 require 'colorize'
 require 'net/ssh/simple'
-require_relative 'commands'
 
 Dir[File.dirname(__FILE__) + '/actions/*.rb'].each(&method(:require))
 
 class Maker
   class Runner
     include Blockenspiel::DSL
-    include Maker::Commands
 
     def self.run(&block)
       Blockenspiel.invoke(block, new)
