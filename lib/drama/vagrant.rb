@@ -10,11 +10,11 @@ class Maker
 
       def validate(env, errors)
           unless File.exists?(@plan)
-            errors.add(I18n.t('vagrant.provisioners.maker.no_plans'))
+            errors.add(I18n.t('vagrant.provisioners.drama.no_plans'))
           end
 
         if @host.nil?
-          errors.add(I18n.t('vagrant.provisioners.maker.no_host'))
+          errors.add(I18n.t('vagrant.provisioners.drama.no_host'))
         end
       end
 
@@ -46,4 +46,4 @@ class Maker
   end
 end
 
-Vagrant.provisioners.register(:maker, Maker::Provisioner)
+Vagrant.provisioners.register(:drama, Maker::Provisioner)

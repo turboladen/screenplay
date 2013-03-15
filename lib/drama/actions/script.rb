@@ -10,7 +10,7 @@ class Maker
       )
         super(ssh, host)
 
-        remote_file = "/tmp/maker.#{Time.now.to_i}"
+        remote_file = "/tmp/drama.#{Time.now.to_i}"
         source_file = ::File.expand_path(source_file)
         @uploader = proc { ssh.scp_ul @host, source_file, remote_file }
 

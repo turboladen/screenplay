@@ -2,17 +2,17 @@ require './lib/maker/version'
 
 
 Gem::Specification.new do |s| 
-  s.name = 'maker'
-  s.version = Maker::VERSION
+  s.name = 'drama'
+  s.version = Drama::VERSION
   s.author = 'Steve Loveless'
-  s.homepage = 'http://github.com/turboladen/maker'
+  s.homepage = 'http://github.com/turboladen/drama'
   s.email = 'steve.loveless@gmail.com'
   s.summary = 'FIX'
   s.description = %q(FIX)
 
   s.required_rubygems_version = '>=2.0.0'
   s.files = Dir.glob('{lib,spec}/**/*') + Dir.glob('*.rdoc') +
-    %w(.gemtest Gemfile maker.gemspec Rakefile)
+    %w(.gemtest Gemfile drama.gemspec Rakefile)
   s.test_files = Dir.glob('{spec}/**/*')
   s.require_paths = ['lib']
 

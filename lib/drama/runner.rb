@@ -60,7 +60,7 @@ class Maker
     def maker_failure(exception)
       if exception.result.success
         error = <<-ERROR
-*** Maker Error! ***
+*** Drama Error! ***
 * Exception: #{exception.wrapped}
 * Exception class: #{exception.wrapped.class}
 * Plan duration: #{exception.result.finish_at - exception.result.start_at || 0}
@@ -77,7 +77,7 @@ class Maker
 
     def plan_failure(output, start_time)
       error = <<-ERROR
-*** Maker Plan Failure! ***
+*** Drama Plan Failure! ***
 * Plan failed: #{output.cmd}
 * Exit code: #{output.exit_code}
 * Plan Duration: #{output.finish_at - output.start_at}
@@ -89,7 +89,7 @@ class Maker
     end
 
     def act
-      abort('Must use Ruby 2.0.0 or greater with maker.') if RUBY_VERSION < '2.0.0'
+      abort('Must use Ruby 2.0.0 or greater with drama.') if RUBY_VERSION < '2.0.0'
       start_time = Time.now
       puts "config: #{@config}"
       puts "ssh options: #{ssh_options}"
@@ -104,15 +104,15 @@ class Maker
         if outcome.status == :failed
           plan_failure(outcome.ssh_output, start_time)
         elsif outcome.status == :no_change
-          puts "Maker finished [NO CHANGE]: '#{cmd.command}'".yellow
+          puts "Drama finished [NO CHANGE]: '#{cmd.command}'".yellow
         elsif outcome.status == :updated
-          puts "Maker finished [UPDATED]: '#{cmd.command}'".green
+          puts "Drama finished [UPDATED]: '#{cmd.command}'".green
         else
           puts "WTF? status: #{outcome.status}"
         end
       end
 
-      puts "Maker finished making\nTotal Duration: #{Time.now - start_time}".green
+      puts "Drama finished making\nTotal Duration: #{Time.now - start_time}".green
     end
 
     def exec_ssh(cmd, start_time)
@@ -125,7 +125,7 @@ class Maker
       end
 
       if r.exit_code.zero?
-        puts "Maker finished: '#{r.cmd}'".green
+        puts "Drama finished: '#{r.cmd}'".green
       else
         p r
         plan_failure(r, start_time)
