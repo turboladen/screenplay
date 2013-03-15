@@ -33,11 +33,13 @@ class Maker
 
     def provision!
       Maker::Runner.run do
-        host(config.host)
-        ssh_key_path(env[:vm].env.default_private_key_path)
+        set host: config.host
+        set ssh_key_path: env[:vm].env.default_private_key_path
+
         plan_text = File.read(config.plan)
         b = get_binding
         b.eval(plan_text)
+
         run_commands
       end
     end

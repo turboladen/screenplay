@@ -31,28 +31,6 @@ class Maker
       @commands << cmd
     end
 
-    def brew(
-      pkg: pkg,
-      state: :installed,
-      update: false,
-      prefix: '/usr/local/bin/brew',
-      force: false
-      )
-
-      action = case state
-      when :latest then 'upgrade'
-      when :installed then 'install'
-      when :removed then 'remove'
-      end
-
-      cmd = ''
-      cmd << "#{prefix}/brew update && "  if update
-      cmd << "#{prefix}/brew #{action} #{pkg}"
-      cmd << ' --force'                   if force
-
-      @commands << cmd
-    end
-
     def file(
       path: path,
       state: :exists
@@ -77,14 +55,14 @@ class Maker
       cmd = ''
 
       source_file = File.expand_path(source_file)
-      puts "Uploading #{source_file} to #{@hostname}:#{remote_file} as #{user}"
+      puts "Uploading #{source_file} to #{@host}:#{remote_file} as #{user}"
       ssh = Net::SSH::Simple.new(ssh_options)
 
-      begin
-        ssh.scp_ul @hostname, source_file, remote_file
-      rescue Net::SSH::Simple::Error => ex
-        maker_failure(ex)
-      end
+      #begin
+        @commands << proc { ssh.scp_ul @host, source_file, remote_file }
+      #rescue Net::SSH::Simple::Error => ex
+      #  maker_failure(ex)
+      #end
 
       cmd << "chmod +x #{remote_file} && #{remote_file}"
       cmd << " #{args}" if args

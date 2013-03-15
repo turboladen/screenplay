@@ -4,6 +4,7 @@ require 'colorize'
 require 'net/ssh/simple'
 require_relative 'commands'
 
+Dir[File.dirname(__FILE__) + '/actions/*.rb'].each(&method(:require))
 
 class Maker
   class Runner
@@ -16,51 +17,69 @@ class Maker
 
     def initialize
       @commands = []
-      @user ||= Etc.getlogin
+
+      @config = {
+        user: Etc.getlogin,
+        ssh_timeout: 120
+      }
     end
 
-    def host(hostname)
-      @hostname = hostname
+    def set(**options)
+      @config.merge! options
     end
 
-    def ssh_key_path(path=nil)
-      @ssh_key_path = path if path
+    def method_missing(meth, *args, &block)
+      super unless defined? Maker::Actions
 
-      @ssh_key_path
+      action = Maker::Actions.constants.find { |c| c.to_s.downcase.to_sym == meth }
+
+      if action.nil?
+        super
+      else
+        klass = Maker::Actions.const_get(action)
+        @commands << klass.new(ssh, @config[:host], *args, &block)
+      end
     end
 
-    def user(user)
-      @user = user
+    def ssh
+      return @ssh if @ssh
+
+      @ssh = Net::SSH::Simple.new(ssh_options)
     end
 
     def ssh_options
       options = {
-        user: @user,
+        user: @config[:user],
+        timeout: @config[:ssh_timeout]
         #  verbose: :debug
       }
 
-      options.merge!(keys: ssh_key_path) if ssh_key_path
+      options.merge!(keys: @config[:ssh_key_path]) if @config[:ssh_key_path]
 
       options
     end
 
-    def maker_failure(exception, start_time)
-      error = <<-ERROR
+    def maker_failure(exception)
+      if exception.result.success
+        error = <<-ERROR
 *** Maker Error! ***
 * Exception: #{exception.wrapped}
-* Plan Duration: #{exception.result.finish_at - exception.result.start_at}
-* Total Duration: #{exception.result.finish_at - start_time}
+* Exception class: #{exception.wrapped.class}
+* Plan duration: #{exception.result.finish_at - exception.result.start_at || 0}
 * SCP source: #{exception.result.opts[:scp_src]}
 * SCP destination: #{exception.result.opts[:scp_dst]}
 * STDERR: #{exception.result.stderr}
-      ERROR
+        ERROR
 
-      abort(error.red)
+        abort(error.red)
+      else
+        raise exception
+      end
     end
 
     def plan_failure(output, start_time)
       error = <<-ERROR
-*** Maker Error! ***
+*** Maker Plan Failure! ***
 * Plan failed: #{output.cmd}
 * Exit code: #{output.exit_code}
 * Plan Duration: #{output.finish_at - output.start_at}
@@ -74,25 +93,43 @@ class Maker
     def run_commands
       abort('Must use Ruby 2.0.0 or greater with maker.') if RUBY_VERSION < '2.0.0'
       start_time = Time.now
+      puts "config: #{@config}"
+      puts "ssh options: #{ssh_options}"
+      puts "Executing commands on host '#{@config[:host]}'".blue
 
-      Net::SSH::Simple.sync do
-        @commands.each do |cmd|
-          puts "executing command: '#{cmd}' as user #{@user} on #{@hostname}".blue
+      @commands.each do |cmd|
+        puts "Running command: '#{cmd.command}'".blue
+        outcome = cmd.run
 
-          begin
-            r = ssh(@hostname, cmd, ssh_options)
-          rescue Net::SSH::Simple::Error => ex
+        p outcome
 
-          end
-
-          if r.exit_code.zero?
-            puts "Maker finished: '#{r.cmd}'".green
-          else
-          end
+        if outcome.status == :failed
+          plan_failure(outcome.ssh_output, start_time)
+        elsif outcome.status == :no_change
+          puts "Maker finished [NO CHANGE]: '#{cmd.command}'".yellow
+        elsif outcome.status == :updated
+          puts "Maker finished [UPDATED]: '#{cmd.command}'".green
         end
       end
 
       puts "Maker finished making\nTotal Duration: #{Time.now - start_time}".green
+    end
+
+    def exec_ssh(cmd, start_time)
+      puts "executing command: '#{cmd}' as user #{@config[:user]} on #{@config[:host]}".blue
+
+      begin
+        r = ssh(@config[:host], cmd, ssh_options)
+      rescue Net::SSH::Simple::Error => ex
+        maker_failure(ex)
+      end
+
+      if r.exit_code.zero?
+        puts "Maker finished: '#{r.cmd}'".green
+      else
+        p r
+        plan_failure(r, start_time)
+      end
     end
 
     def get_binding

@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   %w[
     blockenspiel
     colorize
+    highline
     net-ssh-simple
   ].each(&s.method(:add_dependency))
 
