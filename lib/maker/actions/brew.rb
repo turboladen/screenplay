@@ -18,7 +18,6 @@ class Maker
         when :removed then 'remove'
         end
 
-        @command = ''
         @command << "#{prefix} update && "  if update
         @command << "#{prefix} #{action} #{pkg}"
         @command << ' --force'                   if force

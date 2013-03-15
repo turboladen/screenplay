@@ -8,12 +8,13 @@ class Maker
     def initialize(ssh, host)
       @ssh = ssh
       @host = host
+      @command = ''
     end
 
     # @return [Maker::Outcome]
     def run
       begin
-        output = @ssh.ssh @host, @command
+        output = @ssh.ssh(@host, @command)
         Maker::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
         Maker::Outcome.new(ex, :failed)

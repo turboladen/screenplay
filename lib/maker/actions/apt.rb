@@ -19,8 +19,6 @@ class Maker
         when :removed then 'remove'
         end
 
-        @command = ''
-
         if update_cache
           @command << 'sudo '              if sudo
           @command << 'apt-get update && '
