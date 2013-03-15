@@ -1,9 +1,9 @@
 require_relative '../action'
 
 
-class Maker
+class Drama
   module Actions
-    class Brew < Maker::Action
+    class Brew < Drama::Action
       def initialize(ssh, host,
         pkg: pkg,
         state: :installed,

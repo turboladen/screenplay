@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/maker/runner'
+require_relative '../lib/drama/runner'
 
 file = ARGV.first
 
-Maker::Runner.run do
+Drama::Runner.run do
   load file
   act
 end

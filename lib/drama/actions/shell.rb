@@ -1,9 +1,9 @@
 require_relative '../action'
 
 
-class Maker
+class Drama
   module Actions
-    class Shell < Maker::Action
+    class Shell < Drama::Action
       def initialize(ssh, host,
         cmd
       )

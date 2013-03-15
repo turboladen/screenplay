@@ -1,8 +1,8 @@
 require_relative 'spec_helper'
-require 'maker'
+require 'drama'
 
-describe Maker do
-  specify { Maker::VERSION.should == '0.1.0' }
+describe Drama do
+  specify { Drama::VERSION.should == '0.1.0' }
 
   describe "#initialize" do
     it "should do some stuff" do

@@ -1,7 +1,7 @@
 require_relative 'outcome'
 
 
-class Maker
+class Drama
   class Action
     attr_reader :command
 
@@ -11,13 +11,13 @@ class Maker
       @command = ''
     end
 
-    # @return [Maker::Outcome]
+    # @return [Drama::Outcome]
     def run
       begin
         output = @ssh.ssh(@host, @command)
-        Maker::Outcome.new(output)
+        Drama::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
-        Maker::Outcome.new(ex, :failed)
+        Drama::Outcome.new(ex, :failed)
       end
     end
 

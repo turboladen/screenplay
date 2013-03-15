@@ -2,7 +2,7 @@ require 'vagrant'
 require_relative 'runner'
 
 
-class Maker
+class Drama
   class Provisioner < Vagrant::Provisioners::Base
     class Config < Vagrant::Config::Base
       attr_accessor :host
@@ -32,7 +32,7 @@ class Maker
     end
 
     def provision!
-      Maker::Runner.run do
+      Drama::Runner.run do
         set host: config.host
         set ssh_key_path: env[:vm].env.default_private_key_path
 
@@ -46,4 +46,4 @@ class Maker
   end
 end
 
-Vagrant.provisioners.register(:drama, Maker::Provisioner)
+Vagrant.provisioners.register(:drama, Drama::Provisioner)

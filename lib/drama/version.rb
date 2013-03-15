@@ -1,3 +1,3 @@
-class Maker
+class Drama
   VERSION = '0.1.0'
 end

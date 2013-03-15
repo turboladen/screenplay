@@ -1,9 +1,9 @@
 require_relative '../action'
 
 
-class Maker
+class Drama
   module Actions
-    class Subversion < Maker::Action
+    class Subversion < Drama::Action
       def initialize(ssh, host,
         repo: repo,
         dest: dest,

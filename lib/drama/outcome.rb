@@ -1,4 +1,4 @@
-class Maker
+class Drama
   class Outcome < Hash
     attr_reader :status
     attr_reader :ssh_output

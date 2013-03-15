@@ -1,9 +1,9 @@
 require_relative '../action'
 
 
-class Maker
+class Drama
   module Actions
-    class Apt < Maker::Action
+    class Apt < Drama::Action
       def initialize(ssh, host,
         pkg: pkg,
         state: :installed,

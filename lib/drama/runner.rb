@@ -5,7 +5,7 @@ require 'net/ssh/simple'
 
 Dir[File.dirname(__FILE__) + '/actions/*.rb'].each(&method(:require))
 
-class Maker
+class Drama
   class Runner
     include Blockenspiel::DSL
 
@@ -27,14 +27,14 @@ class Maker
     end
 
     def method_missing(meth, *args, &block)
-      super unless defined? Maker::Actions
+      super unless defined? Drama::Actions
 
-      action = Maker::Actions.constants.find { |c| c.to_s.downcase.to_sym == meth }
+      action = Drama::Actions.constants.find { |c| c.to_s.downcase.to_sym == meth }
 
       if action.nil?
         super
       else
-        klass = Maker::Actions.const_get(action)
+        klass = Drama::Actions.const_get(action)
         @actions << klass.new(ssh, @config[:host], *args, &block)
       end
     end
@@ -57,7 +57,7 @@ class Maker
       options
     end
 
-    def maker_failure(exception)
+    def drama_failure(exception)
       if exception.result.success
         error = <<-ERROR
 *** Drama Error! ***
@@ -121,7 +121,7 @@ class Maker
       begin
         r = ssh(@config[:host], cmd, ssh_options)
       rescue Net::SSH::Simple::Error => ex
-        maker_failure(ex)
+        drama_failure(ex)
       end
 
       if r.exit_code.zero?

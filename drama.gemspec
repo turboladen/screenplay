@@ -1,4 +1,4 @@
-require './lib/maker/version'
+require './lib/drama/version'
 
 
 Gem::Specification.new do |s| 
