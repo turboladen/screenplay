@@ -109,6 +109,8 @@ class Maker
           puts "Maker finished [NO CHANGE]: '#{cmd.command}'".yellow
         elsif outcome.status == :updated
           puts "Maker finished [UPDATED]: '#{cmd.command}'".green
+        else
+          puts "WTF? status: #{outcome.status}"
         end
       end
 

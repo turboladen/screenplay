@@ -5,6 +5,19 @@ class Maker
   class Action
     attr_reader :command
 
+    def initialize(ssh, host)
+      @ssh = ssh
+      @host = host
+    end
 
+    # @return [Maker::Outcome]
+    def run
+      begin
+        output = @ssh.ssh @host, @command
+        Maker::Outcome.new(output)
+      rescue Net::SSH::Simple::Error => ex
+        Maker::Outcome.new(ex, :failed)
+      end
+    end
   end
 end

@@ -4,33 +4,6 @@ require 'net/scp'
 class Maker
   module Commands
 
-    def apt(
-      pkg: pkg,
-      state: :installed,
-      update_cache: false,
-      sudo: false
-      )
-
-      action = case state
-      when :latest then 'install'
-        # install should just check to see if it's installed, not always install it
-      when :installed then 'install'
-      when :removed then 'remove'
-      end
-
-      cmd = ''
-
-      if update_cache
-        cmd << 'sudo '              if sudo
-        cmd << 'apt-get update && '
-      end
-
-      cmd << 'sudo '              if sudo
-      cmd << "apt-get #{action} #{pkg}"
-
-      @commands << cmd
-    end
-
     def file(
       path: path,
       state: :exists

@@ -3,40 +3,43 @@ require_relative '../action'
 
 class Maker
   module Actions
-    class Brew < Maker::Action
+    class Apt < Maker::Action
       def initialize(ssh, host,
         pkg: pkg,
         state: :installed,
-        update: false,
-        prefix: '/usr/local/bin/brew',
-        force: false)
+        update_cache: false,
+        sudo: false
+      )
         super(ssh, host)
 
         action = case state
-        when :latest then 'upgrade'
+        when :latest then 'install'
+          # install should just check to see if it's installed, not always install it
         when :installed then 'install'
         when :removed then 'remove'
         end
 
         @command = ''
-        @command << "#{prefix} update && "  if update
-        @command << "#{prefix} #{action} #{pkg}"
-        @command << ' --force'                   if force
+
+        if update_cache
+          @command << 'sudo '              if sudo
+          @command << 'apt-get update && '
+        end
+
+        @command << 'sudo '              if sudo
+        @command << "apt-get #{action} #{pkg}"
       end
 
-      # @return [Hash]
       def run
         outcome = super
         return outcome if outcome.exception?
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          :updated
-        when 1
-          if outcome.ssh_output.stdout.match /already installed/
+          if outcome.ssh_output.stdout.match /is already the newest version/m
             :no_change
           else
-            :failed
+            :updated
           end
         else
           :failed
