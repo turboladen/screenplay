@@ -3,22 +3,6 @@ require 'net/scp'
 
 class Maker
   module Commands
-
-    def file(
-      path: path,
-      state: :exists
-      )
-
-      cmd = case state
-      when :absent then "rm -rf #{path}"
-      when :directory then "mkdir -p #{path}"
-      when :exists then file_exists?(path)
-        else raise "Unknown state: #{state}"
-      end
-
-      @commands << cmd
-    end
-
     def script(
       source_file,
       args: nil,

@@ -19,5 +19,9 @@ class Maker
         Maker::Outcome.new(ex, :failed)
       end
     end
+
+    def file_exists?(path)
+      "[ -f #{path} ]"
+    end
   end
 end
