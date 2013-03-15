@@ -40,7 +40,7 @@ class Maker
         b = get_binding
         b.eval(plan_text)
 
-        run_commands
+        act
       end
     end
   end
