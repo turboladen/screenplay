@@ -125,23 +125,6 @@ class Drama
       puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
     end
 
-    def exec_ssh(cmd, start_time)
-      puts "executing command: '#{cmd}' as user #{@config[:user]} on #{@config[:host]}".blue
-
-      begin
-        r = ssh(@config[:host], cmd, ssh_options)
-      rescue Net::SSH::Simple::Error => ex
-        drama_failure(ex)
-      end
-
-      if r.exit_code.zero?
-        puts "Drama finished: '#{r.cmd}'".green
-      else
-        p r
-        plan_failure(r, start_time)
-      end
-    end
-
     def get_binding
       binding
     end
