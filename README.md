@@ -108,13 +108,13 @@ Actions available:
 
         # rbenv
         git repo: 'git://github.com/sstephenson/rbenv.git', dest: rbenv_home
-        shell "echo 'export PATH="#{rbenv_home}/bin:$PATH"' >> #{profile_file}"
-        shell "echo 'eval "$(rbenv init -)"' >> #{profile_file}"
+        shell %[echo 'export PATH="#{rbenv_home}/bin:$PATH"' >> #{profile_file}]
+        shell %[echo 'eval "$(rbenv init -)"' >> #{profile_file}]
 
         # ruby-build
         git repo: 'git://github.com/sstephenson/ruby-build.git',
-          dest: "#{rbenv_home}/plugins/ruby-build'
-      en
+          dest: "#{rbenv_home}/plugins/ruby-build"
+      end
     end
 
 
