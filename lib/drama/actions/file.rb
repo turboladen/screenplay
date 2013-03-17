@@ -4,11 +4,11 @@ require_relative '../action'
 class Drama
   module Actions
     class File < Drama::Action
-      def initialize(ssh, host,
+      def initialize(
         path: path,
         state: :exists
       )
-        super(ssh, host)
+        super()
 
         @command = case state
         when :absent then "rm -rf #{path}"
@@ -18,8 +18,8 @@ class Drama
         end
       end
 
-      def run
-        outcome = super
+      def call(ssh, host)
+        outcome = super(ssh, host)
         return outcome if outcome.exception?
 
         outcome.status = case outcome.ssh_output.exit_code

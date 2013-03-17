@@ -23,7 +23,7 @@ class Drama
     end
 
     def exception?
-      has_key?(:exit_status)
+      @ssh_output.success == false
     end
   end
 end

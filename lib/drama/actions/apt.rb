@@ -4,13 +4,13 @@ require_relative '../action'
 class Drama
   module Actions
     class Apt < Drama::Action
-      def initialize(ssh, host,
-        pkg: pkg,
+      def initialize(
+        package: package,
         state: :installed,
         update_cache: false,
         sudo: false
       )
-        super(ssh, host)
+        super()
 
         action = case state
         when :latest then 'install'
@@ -25,11 +25,11 @@ class Drama
         end
 
         @command << 'sudo '              if sudo
-        @command << "apt-get #{action} #{pkg}"
+        @command << "apt-get #{action} #{package}"
       end
 
-      def run
-        outcome = super
+      def call(ssh, host)
+        outcome = super(ssh, host)
         return outcome if outcome.exception?
 
         outcome.status = case outcome.ssh_output.exit_code

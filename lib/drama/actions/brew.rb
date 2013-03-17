@@ -4,15 +4,14 @@ require_relative '../action'
 class Drama
   module Actions
     class Brew < Drama::Action
-      def initialize(ssh, host,
-        pkg: pkg,
+      def initialize(
+        formula: formula,
         state: :installed,
         update: false,
         prefix: '/usr/local/bin/brew',
         force: false
       )
-        super(ssh, host)
-
+        super()
         action = case state
         when :latest then 'upgrade'
         when :installed then 'install'
@@ -20,13 +19,13 @@ class Drama
         end
 
         @command << "#{prefix} update && "  if update
-        @command << "#{prefix} #{action} #{pkg}"
+        @command << "#{prefix} #{action} #{formula}"
         @command << ' --force'                   if force
       end
 
       # @return [Hash]
-      def run
-        outcome = super
+      def call(ssh, host)
+        outcome = super(ssh, host)
         return outcome if outcome.exception?
 
         outcome.status = case outcome.ssh_output.exit_code

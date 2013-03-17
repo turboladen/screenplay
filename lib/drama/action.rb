@@ -5,16 +5,14 @@ class Drama
   class Action
     attr_reader :command
 
-    def initialize(ssh, host)
-      @ssh = ssh
-      @host = host
+    def initialize
       @command = ''
     end
 
     # @return [Drama::Outcome]
-    def run
+    def call(ssh, host)
       begin
-        output = @ssh.ssh(@host, @command)
+        output = ssh.ssh(host, @command)
         Drama::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
         Drama::Outcome.new(ex, :failed)
