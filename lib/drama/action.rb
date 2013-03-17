@@ -10,7 +10,7 @@ class Drama
     end
 
     # @return [Drama::Outcome]
-    def call(ssh, host)
+    def act(ssh, host)
       begin
         output = ssh.ssh(host, @command)
         Drama::Outcome.new(output)

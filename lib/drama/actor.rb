@@ -107,7 +107,7 @@ class Drama
 
       @actions.each do |cmd|
         puts "Running command: '#{cmd.command}'".blue
-        outcome = cmd.call(ssh, @config[:host])
+        outcome = cmd.act(ssh, @config[:host])
         puts "outcome: #{outcome}"
 
         if outcome.status == :failed

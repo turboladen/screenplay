@@ -17,7 +17,7 @@ class Drama
         @command << " #{args}" if args
       end
 
-      def call(ssh, host)
+      def act(ssh, host)
         uploader = proc { ssh.scp_ul(host, @source_file, @remote_file) }
         uploader.call
 

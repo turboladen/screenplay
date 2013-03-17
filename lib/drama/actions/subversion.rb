@@ -17,7 +17,7 @@ class Drama
         @command << "#{prefix} checkout #{repo} #{@dest}"
       end
 
-      def call(ssh, host)
+      def act(ssh, host)
         outcome = super(ssh, host)
         return outcome if outcome.exception?
 

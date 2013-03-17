@@ -24,7 +24,7 @@ class Drama
       end
 
       # @return [Hash]
-      def call(ssh, host)
+      def act(ssh, host)
         outcome = super(ssh, host)
         return outcome if outcome.exception?
 
