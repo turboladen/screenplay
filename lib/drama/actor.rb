@@ -4,6 +4,7 @@ require 'colorize'
 require 'net/ssh/simple'
 require_relative 'part'
 require_relative 'actions'
+require_relative 'logger'
 
 
 class Drama
@@ -27,13 +28,16 @@ class Drama
   class Actor
     include Blockenspiel::DSL
     include Drama::Actions
+    include LogSwitch::Mixin
 
-    def self.act_on(host=nil, &block)
+    def self.act_on(host, &block)
       actor = new(host)
       Blockenspiel.invoke(block, actor)
 
       actor
     end
+
+    attr_reader :config
 
     def initialize(host)
       @actions = []
@@ -43,9 +47,11 @@ class Drama
         ssh_timeout: 120,
         host: host
       }
+      log "Initialized for host: #{host}"
     end
 
     def set(**options)
+      log "Adding options: #{options}"
       @config.merge! options
     end
 
@@ -56,18 +62,53 @@ class Drama
     end
 
     def ssh_options
-      options = {
+      @ssh_options ||= {
         user: @config[:user],
         timeout: @config[:ssh_timeout]
         #  verbose: :debug
       }
 
-      options.merge!(keys: @config[:ssh_key_path]) if @config[:ssh_key_path]
+      @ssh_options.merge!(keys: @config[:ssh_key_path]) if @config[:ssh_key_path]
 
-      options
+      @ssh_options
+    end
+
+    def action!
+      log 'Starting action...'
+      log "...config: #{@config}"
+      log "...ssh options: #{ssh_options}"
+      log "...actions: #{@actions}"
+      puts "Executing action on host '#{@config[:host]}'".blue
+
+      start_time = Time.now
+
+      @actions.each do |cmd|
+        puts "Running command: '#{cmd.command}'".blue
+        outcome = cmd.act(ssh, @config[:host])
+        puts "outcome: #{outcome}"
+
+        if outcome.status == :failed
+          plan_failure(outcome.ssh_output, start_time)
+        elsif outcome.status == :no_change
+          puts "Drama finished [NO CHANGE]: '#{cmd.command}'".yellow
+        elsif outcome.status == :updated
+          puts "Drama finished [UPDATED]: '#{cmd.command}'".green
+        else
+          puts "WTF? status: #{outcome.status}".red
+        end
+
+      end
+
+      puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
+    end
+
+    def play_part(part_class, **options)
+      part_class.act(self, **options)
     end
 
     def drama_failure(exception)
+      log "Drama Failure: #{exception}"
+
       if exception.result.success
         error = <<-ERROR
 *** Drama Error! ***
@@ -86,6 +127,8 @@ class Drama
     end
 
     def plan_failure(output, start_time)
+      log "Plan Failure: #{exception}"
+
       error = <<-ERROR
 *** Drama Plan Failure! ***
 * Plan failed: #{output.cmd}
@@ -96,38 +139,6 @@ class Drama
       ERROR
 
       abort(error.red)
-    end
-
-    def action!
-      abort('Must use Ruby 2.0.0 or greater with drama.') if RUBY_VERSION < '2.0.0'
-      start_time = Time.now
-      puts "config: #{@config}"
-      puts "ssh options: #{ssh_options}"
-      puts "Executing action on host '#{@config[:host]}'".blue
-      puts "Actions: #{@actions}"
-
-      @actions.each do |cmd|
-        puts "Running command: '#{cmd.command}'".blue
-        outcome = cmd.act(ssh, @config[:host])
-        puts "outcome: #{outcome}"
-
-        if outcome.status == :failed
-          plan_failure(outcome.ssh_output, start_time)
-        elsif outcome.status == :no_change
-          puts "Drama finished [NO CHANGE]: '#{cmd.command}'".yellow
-        elsif outcome.status == :updated
-          puts "Drama finished [UPDATED]: '#{cmd.command}'".green
-        else
-          puts "WTF? status: #{outcome.status}"
-        end
-
-      end
-
-      puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
-    end
-
-    def play_part(part_class, **options)
-      part_class.act(self, **options)
     end
 
     def get_binding

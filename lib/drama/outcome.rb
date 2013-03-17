@@ -1,5 +1,10 @@
+require_relative 'logger'
+
+
 class Drama
   class Outcome < Hash
+    include LogSwitch::Mixin
+
     attr_reader :status
     attr_reader :ssh_output
 
@@ -10,8 +15,10 @@ class Drama
       self[:status] = @status
 
       @ssh_output = ssh_output
+      log "SSH output: #{@ssh_output}"
 
       if @ssh_output.is_a? Net::SSH::Simple::Error
+        raise @ssh_output
       else
         @ssh_output.each { |k, v| self[k.to_sym] = v }
       end

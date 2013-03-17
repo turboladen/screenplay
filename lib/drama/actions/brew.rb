@@ -8,19 +8,21 @@ class Drama
         formula: formula,
         state: :installed,
         update: false,
-        prefix: '/usr/local/bin/brew',
+        binary: '/usr/local/bin/brew',
         force: false
       )
-        super()
         action = case state
         when :latest then 'upgrade'
         when :installed then 'install'
         when :removed then 'remove'
         end
 
-        @command << "#{prefix} update && "  if update
-        @command << "#{prefix} #{action} #{formula}"
-        @command << ' --force'                   if force
+        command ''
+        command << "#{binary} update && "  if update
+        command << "#{binary} #{action} #{formula}"
+        command << ' --force'                   if force
+
+        super(command)
       end
 
       # @return [Hash]

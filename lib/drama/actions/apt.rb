@@ -10,8 +10,6 @@ class Drama
         update_cache: false,
         sudo: false
       )
-        super()
-
         action = case state
         when :latest then 'install'
           # install should just check to see if it's installed, not always install it
@@ -19,13 +17,17 @@ class Drama
         when :removed then 'remove'
         end
 
+        command = ''
+
         if update_cache
-          @command << 'sudo '              if sudo
-          @command << 'apt-get update && '
+          command << 'sudo '              if sudo
+          command << 'apt-get update && '
         end
 
-        @command << 'sudo '              if sudo
-        @command << "apt-get #{action} #{package}"
+        command << 'sudo '              if sudo
+        command << "apt-get #{action} #{package}"
+
+        super(command)
       end
 
       def act(ssh, host)

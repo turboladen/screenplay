@@ -8,13 +8,13 @@ class Drama
         source_file: source_file,
         args: nil
       )
-        super()
-
         @remote_file = "/tmp/drama.#{Time.now.to_i}"
         @source_file = ::File.expand_path(source_file)
 
-        @command << "chmod +x #{@remote_file} && #{@remote_file}"
-        @command << " #{args}" if args
+        command = "chmod +x #{@remote_file} && #{@remote_file}"
+        command << " #{args}" if args
+
+        super(command)
       end
 
       def act(ssh, host)

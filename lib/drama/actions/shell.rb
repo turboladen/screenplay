@@ -4,9 +4,8 @@ require_relative '../action'
 class Drama
   module Actions
     class Shell < Drama::Action
-      def initialize(command: cmd)
-        super()
-        @command = command
+      def initialize(command: command)
+        super(command)
       end
 
       def act(ssh, host)

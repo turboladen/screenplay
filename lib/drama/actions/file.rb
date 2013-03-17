@@ -8,14 +8,14 @@ class Drama
         path: path,
         state: :exists
       )
-        super()
-
-        @command = case state
+        command = case state
         when :absent then "rm -rf #{path}"
         when :directory then "mkdir -p #{path}"
         when :exists then file_exists?(path)
         else raise "Unknown state: #{state}"
         end
+
+        super(command)
       end
 
       def act(ssh, host)

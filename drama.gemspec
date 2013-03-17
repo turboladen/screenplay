@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
     blockenspiel
     colorize
     highline
+    log_switch
     net-ssh-simple
   ].each(&s.method(:add_dependency))
 

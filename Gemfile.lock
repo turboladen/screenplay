@@ -5,6 +5,7 @@ PATH
       blockenspiel
       colorize
       highline
+      log_switch
       net-ssh-simple
 
 GEM
@@ -23,6 +24,7 @@ GEM
     i18n (0.6.4)
     json (1.7.7)
     log4r (1.1.10)
+    log_switch (0.4.0)
     multi_json (1.6.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)

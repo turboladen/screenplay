@@ -5,16 +5,17 @@ class Drama
   module Actions
     class Subversion < Drama::Action
       def initialize(
-        repo: repo,
-        dest: dest,
-        prefix: '/usr/bin/env svn'
+        repository: repository,
+        destination: destination,
+        binary: '/usr/bin/env svn'
       )
-        super()
-        @dest = dest
+        @destination = destination
 
-        @command << file_exists?(@dest) + ' && '
-        @command << "#{prefix} update #{@dest} || "
-        @command << "#{prefix} checkout #{repo} #{@dest}"
+        command = file_exists?(@destination) + ' && '
+        command << "#{binary} update #{@destination} || "
+        command << "#{binary} checkout #{repository} #{@destination}"
+
+        super(command)
       end
 
       def act(ssh, host)
@@ -23,7 +24,7 @@ class Drama
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          if outcome.ssh_output.stdout.match /[A-Za-z]\s+#{@dest}/m
+          if outcome.ssh_output.stdout.match /[A-Za-z]\s+#{@destination}/m
             :updated
           else
             :no_change
