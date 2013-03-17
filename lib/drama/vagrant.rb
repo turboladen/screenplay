@@ -1,5 +1,5 @@
 require 'vagrant'
-require_relative 'runner'
+require_relative 'actor'
 
 
 class Drama
@@ -32,16 +32,15 @@ class Drama
     end
 
     def provision!
-      Drama::Runner.run do
-        set host: config.host
+      actor = Drama::Actor.act_on(config.host) do
         set ssh_key_path: env[:vm].env.default_private_key_path
 
         plan_text = File.read(config.plan)
         b = get_binding
         b.eval(plan_text)
-
-        act
       end
+
+      actor.action!
     end
   end
 end
