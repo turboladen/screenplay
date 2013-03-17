@@ -2,7 +2,7 @@ require 'blockenspiel'
 require 'etc'
 require 'colorize'
 require 'net/ssh/simple'
-require_relative 'scene'
+require_relative 'part'
 require_relative 'actions'
 
 
@@ -28,9 +28,10 @@ class Drama
     include Blockenspiel::DSL
     include Drama::Actions
 
-    def self.act_on(host, &block)
+    def self.act_on(host=nil, &block)
       actor = new(host)
       Blockenspiel.invoke(block, actor)
+
       actor
     end
 
@@ -123,6 +124,10 @@ class Drama
       end
 
       puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
+    end
+
+    def play_part(part_class, **options)
+      part_class.act(self, **options)
     end
 
     def get_binding
