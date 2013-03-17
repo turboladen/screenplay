@@ -1,10 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/drama/runner'
+require_relative '../lib/drama'
 
-file = ARGV.first
+file = 'Dramafile'
 
-Drama::Runner.run do
-  load file
-  act
-end
+actor = Drama::Actor.act_on { load file }
+actor.action!
