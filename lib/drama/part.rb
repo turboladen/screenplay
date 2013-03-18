@@ -6,11 +6,7 @@ class Drama
 
     def initialize(actor, **options)
       @actor = actor
-      if options.empty?
-        act
-      else
-        act(**options)
-      end
+      options.empty? ? act : act(**options)
     end
 
     def method_missing(meth, *args, **options)
