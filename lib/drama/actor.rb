@@ -44,7 +44,7 @@ class Drama
 
       @config = {
         user: Etc.getlogin,
-        ssh_timeout: 120,
+        ssh_timeout: 1800,
         host: host
       }
       log "Initialized for host: #{host}"
@@ -96,7 +96,6 @@ class Drama
         else
           puts "WTF? status: #{outcome.status}".red
         end
-
       end
 
       puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
