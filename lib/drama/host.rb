@@ -1,18 +1,17 @@
-require 'blockenspiel'
 require 'etc'
 require 'colorize'
 require 'net/ssh/simple'
-require_relative 'part'
 require_relative 'actions'
+require_relative 'part'
 require_relative 'logger'
 
 
 class Drama
 
-  # An Actor runs Drama::Actions on a remote host.
+  # An Host runs Drama::Actions on a remote host.
   #
   # Use block form:
-  #   actor = Drama::Actor.act_on 'my_box' do
+  #   actor = Drama::Host.act_on 'my_box' do
   #     apt package: 'subversion', state: :installed
   #     subversion repo: 'http://my_repo.googlecode.com/svn/trunk', dest: '/home/me/my_repo'
   #   end
@@ -20,26 +19,20 @@ class Drama
   #   actor.action!
   #
   # Or not:
-  #   actor = Drama::Actor.new 'my_box'
+  #   actor = Drama::Host.new 'my_box'
   #   actor.apt package: 'subversion', state: :installed
   #   actor.subversion repo: 'http://my_repo.googlecode.com/svn/trunk', dest: '/home/me/my_repo'
   #   actor.action!
   #
-  class Actor
-    include Blockenspiel::DSL
+  class Host
     include Drama::Actions
     include LogSwitch::Mixin
 
-    def self.act_on(host, &block)
-      actor = new(host)
-      Blockenspiel.invoke(block, actor)
-
-      actor
-    end
-
     attr_reader :config
+    attr_reader :name
 
-    def initialize(host)
+    def initialize(host, name='', &block)
+      @name = name
       @actions = []
 
       @config = {
@@ -48,6 +41,8 @@ class Drama
         host: host
       }
       log "Initialized for host: #{host}"
+
+      block.call(self)
     end
 
     def set(**options)
