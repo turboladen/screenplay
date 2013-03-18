@@ -30,7 +30,7 @@ class Drama
     attr_reader :config
     attr_reader :name
 
-    def initialize(hostname, name='')
+    def initialize(hostname, name='', config_options={})
       @name = name
       @actions = []
 
@@ -39,6 +39,7 @@ class Drama
         ssh_timeout: 1800,
         host: hostname
       }
+      @config.merge! config_options
 
       log "Initialized for host: #{hostname}"
     end
