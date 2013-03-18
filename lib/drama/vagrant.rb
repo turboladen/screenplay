@@ -1,25 +1,16 @@
 require 'vagrant'
-require_relative 'actor'
+require_relative 'screenplay'
 
 
 class Drama
   class Provisioner < Vagrant::Provisioners::Base
     class Config < Vagrant::Config::Base
-      attr_accessor :host
-      attr_accessor :plan
+      attr_accessor :stage
 
       def validate(env, errors)
-          unless File.exists?(@plan)
-            errors.add(I18n.t('vagrant.provisioners.drama.no_plans'))
-          end
-
-        if @host.nil?
-          errors.add(I18n.t('vagrant.provisioners.drama.no_host'))
+        unless File.exists?('Dramafile')
+          errors.add(I18n.t('vagrant.provisioners.drama.no_dramafile'))
         end
-      end
-
-      def plan=(plan)
-        @plan = File.expand_path(plan)
       end
     end
 
@@ -27,20 +18,23 @@ class Drama
       Config
     end
 
-    def prepare
-      #
-    end
-
     def provision!
-      actor = Drama::Actor.act_on(config.host) do
-        set ssh_key_path: env[:vm].env.default_private_key_path
-
-        plan_text = File.read(config.plan)
+      screenplay = Drama::Screenplay.write(config.stage) do
+        screenplay_text = File.read 'Dramafile'
         b = get_binding
-        b.eval(plan_text)
+        b.eval(screenplay_text)
       end
 
-      actor.action!
+      actors = screenplay.actors.find_all do |actor|
+        actor.config[:host] == screenplay.stages[config.stage]
+      end
+      p actors
+
+      actors.each do |actor|
+        actor.set ssh_key_path: env[:vm].env.default_private_key_path
+      end
+
+      screenplay.action!
     end
   end
 end

@@ -4,5 +4,11 @@ require_relative '../lib/drama'
 
 file = 'Dramafile'
 
-actor = Drama::Actor.act_on { load file }
-actor.action!
+# drama testing
+stage = ARGV.first.to_s
+
+Drama::Screenplay.write(stage) do
+  load file
+end
+
+
