@@ -28,7 +28,11 @@ class Drama
     end
 
     def file_exists?(path)
-      "[ -f #{path} ] "
+      "[ -f #{path} ]"
+    end
+
+    def user_exists?(username)
+      "id -u #{username} >/dev/null 2>&1"
     end
   end
 end
