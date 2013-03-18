@@ -1,18 +1,20 @@
 class Drama
   class Part
-    def self.act(actor, **options)
-      new(actor, **options)
+    def self.act(host, **options)
+      new(host, **options)
     end
 
-    def initialize(actor, **options)
-      @actor = actor
+    attr_reader :host
+
+    def initialize(host, **options)
+      @host = host
       options.empty? ? act : act(**options)
     end
 
     def method_missing(meth, *args, **options)
-      super unless @actor.respond_to?(meth)
+      super unless @host.respond_to?(meth)
 
-      @actor.send(meth, *args, **options)
+      @host.send(meth, *args, **options)
     end
   end
 end
