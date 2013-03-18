@@ -1,5 +1,5 @@
 require 'blockenspiel'
-require_relative 'actor'
+require_relative 'host'
 require_relative 'logger'
 
 
@@ -33,13 +33,13 @@ class Drama
 
     def act_on(host, actor_options={}, &block)
       actor = if host == :stage
-        Drama::Actor.act_on(@stages[@stage], &block)
+        Drama::Host.act_on(@stages[@stage], &block)
       else
-        Drama::Actor.act_on(host, &block)
+        Drama::Host.act_on(host, &block)
       end
 
       actor.config.merge!(actor_options)
-      log "Added Actor for host: #{actor.config[:host]}"
+      log "Added Host for host: #{actor.config[:host]}"
 
       @actors << actor
     end
