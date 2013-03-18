@@ -6,13 +6,17 @@ class Drama
 
     def initialize(actor, **options)
       @actor = actor
-      act(**options)
+      if options.empty?
+        act
+      else
+        act(**options)
+      end
     end
 
-    def method_missing(meth, *args, **options, &block)
+    def method_missing(meth, *args, **options)
       super unless @actor.respond_to?(meth)
 
-      @actor.send(meth, *args, **options, &block)
+      @actor.send(meth, *args, **options)
     end
   end
 end
