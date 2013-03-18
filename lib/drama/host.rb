@@ -31,18 +31,17 @@ class Drama
     attr_reader :config
     attr_reader :name
 
-    def initialize(host, name='', &block)
+    def initialize(hostname, name='')
       @name = name
       @actions = []
 
       @config = {
         user: Etc.getlogin,
         ssh_timeout: 1800,
-        host: host
+        host: hostname
       }
-      log "Initialized for host: #{host}"
 
-      block.call(self)
+      log "Initialized for host: #{hostname}"
     end
 
     def set(**options)

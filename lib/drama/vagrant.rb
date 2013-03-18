@@ -1,5 +1,6 @@
 require 'vagrant'
-require_relative 'screenplay'
+require_relative '../drama'
+require_relative 'stage'
 
 
 class Drama
@@ -19,22 +20,25 @@ class Drama
     end
 
     def provision!
-      screenplay = Drama::Screenplay.write(config.stage) do
-        screenplay_text = File.read 'Dramafile'
-        b = get_binding
-        b.eval(screenplay_text)
+      load 'Dramafile'
+
+      actors = []
+      puts "stages: #{Drama.stages}"
+      puts "config stage: #{config.stage}"
+
+      stages = Drama.stages.find_all do |stage|
+        stage == config.stage || stage == config.stage.to_s
       end
 
-      actors = screenplay.actors.find_all do |actor|
-        actor.config[:host] == screenplay.stages[config.stage]
-      end
-      p actors
+      abort "No stages found that match stage '#{config.stage}'" if stages.empty?
 
-      actors.each do |actor|
-        actor.set ssh_key_path: env[:vm].env.default_private_key_path
+      stages.each do |stage|
+        klass = Drama.const_get(stage.capitalize)
+        actors << klass.new
+        actors.last.build_commands
       end
 
-      screenplay.action!
+      actors.each { |actor| actor.action! }
     end
   end
 end

@@ -1,14 +1,21 @@
 #!/usr/bin/env ruby
 
+# Trap interrupts to quit cleanly. See
+# https://twitter.com/mitchellh/status/283014103189053442
+Signal.trap('INT') { exit 1 }
+
 require_relative '../lib/drama'
 
 file = 'Dramafile'
+cli_stage = ARGV.first.to_s
+load file
+actors = []
 
-# drama testing
-stage = ARGV.first.to_s
-
-Drama::Screenplay.write(stage) do
-  load file
+Drama.stages[cli_stage].each do |stage|
+  klass = Drama.const_get(stage.capitalize)
+  actors << klass.new.build_commands
 end
+
+actors.each { |actor| actor.action! }
 
 
