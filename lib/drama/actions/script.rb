@@ -18,11 +18,10 @@ class Drama
       end
 
       def act(ssh, host)
-        uploader = proc { ssh.scp_ul(host, @source_file, @remote_file) }
-        uploader.call
+        ssh.scp_ul(host, @source_file, @remote_file)
 
         outcome = super
-        return outcome if outcome.exception?
+        return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0

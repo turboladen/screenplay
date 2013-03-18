@@ -21,7 +21,7 @@ class Drama
 
       def act(ssh, host)
         outcome = super(ssh, host)
-        return outcome if outcome.exception?
+        return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
