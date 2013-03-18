@@ -22,23 +22,24 @@ class Drama
     def provision!
       load 'Dramafile'
 
-      actors = []
       puts "stages: #{Drama.stages}"
       puts "config stage: #{config.stage}"
 
-      stages = Drama.stages.find_all do |stage|
+      stage_name = Drama.stages.find do |stage|
         stage == config.stage || stage == config.stage.to_s
       end
 
-      abort "No stages found that match stage '#{config.stage}'" if stages.empty?
+      abort "No stages found that match stage '#{config.stage}'" if stage_name.empty?
 
-      stages.each do |stage|
-        klass = Drama.const_get(stage.capitalize)
-        actors << klass.new
-        actors.last.build_commands
+      klass = Drama.const_get(stage_name.capitalize)
+      stage = klass.new
+      stage.build_commands
+
+      stage.host_group.each do |name, host|
+        host.set ssh_key_path: env[:vm].env.default_private_key_path
       end
 
-      actors.each { |actor| actor.action! }
+      stage.action!
     end
   end
 end

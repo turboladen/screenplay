@@ -1,4 +1,5 @@
 require_relative 'host'
+require_relative 'logger'
 
 
 class Drama
@@ -7,9 +8,10 @@ class Drama
       Drama.stages << base.to_s.downcase.split('::').last
     end
 
+    attr_reader :host_group
+
     def action!
       @host_group.each do |name, host|
-        puts "Acting on host #{name}..."
         host.action!
       end
     end
