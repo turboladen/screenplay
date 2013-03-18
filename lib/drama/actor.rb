@@ -127,7 +127,7 @@ class Drama
     end
 
     def plan_failure(output, start_time)
-      log "Plan Failure: #{exception}"
+      log "Plan Failure: #{output}"
 
       error = <<-ERROR
 *** Drama Plan Failure! ***
