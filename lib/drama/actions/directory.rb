@@ -14,7 +14,7 @@ class Drama
         when :absent
           "rm -rf #{path} "
         when :exists
-          cmd = file_exists?(path)
+          cmd = "#{file_exists?(path)} || mkdir -p #{path}"
           cmd << %[ && chown #{owner} #{path} ] if owner
           cmd << %[ && chmod #{mode} #{path} ] if mode
           cmd
@@ -33,7 +33,11 @@ class Drama
         when 0
           :updated
         else
-          :failed
+          if outcome.ssh_output.stdout.match /File exists/
+            :no_change
+          else
+            :failed
+          end
         end
 
         outcome
