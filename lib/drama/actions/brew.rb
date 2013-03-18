@@ -17,7 +17,7 @@ class Drama
         when :removed then 'remove'
         end
 
-        command ''
+        command = ''
         command << "#{binary} update && "  if update
         command << "#{binary} #{action} #{formula}"
         command << ' --force'                   if force
