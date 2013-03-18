@@ -20,7 +20,7 @@ class Drama
       def act(ssh, host)
         ssh.scp_ul(host, @source_file, @remote_file)
 
-        outcome = super
+        outcome = run_command(ssh, host)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code
