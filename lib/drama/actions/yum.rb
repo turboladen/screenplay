@@ -34,7 +34,6 @@ class Drama
         outcome = super(ssh, host)
         return outcome if outcome.error?
 
-        log "Exit code: #{outcome.ssh_output.exit_code}"
         outcome.status = case outcome.ssh_output.exit_code
         when 0
           if outcome.ssh_output.stdout.match /already installed and latest version\nNothing to do/m
