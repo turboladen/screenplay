@@ -10,19 +10,18 @@ class Drama
 
   # An Host runs Drama::Actions on a remote host.
   #
-  # Use block form:
-  #   actor = Drama::Host.act_on 'my_box' do
-  #     apt package: 'subversion', state: :installed
-  #     subversion repo: 'http://my_repo.googlecode.com/svn/trunk', dest: '/home/me/my_repo'
-  #   end
+  #   host = Drama::Host.new 'my_box'
   #
-  #   actor.action!
+  #   host.brew formula: 'rbenv'
+  #   host.subversion repository: 'http://entmenu.googlecode.com/svn/trunk/',
+  #     destination: '/tmp/entmenu'
+  #   host.directory path: '/tmp/entmenu', state: :absent
+  #   host.shell command: %[/usr/bin/env python -V]
+  #   host.directory path: '/tmp/steve'
+  #   host.directory path: '/tmp/steve', state: :absent
+  #   host.script source_file: 'script_test.rb', args: '--first-arg'
   #
-  # Or not:
-  #   actor = Drama::Host.new 'my_box'
-  #   actor.apt package: 'subversion', state: :installed
-  #   actor.subversion repo: 'http://my_repo.googlecode.com/svn/trunk', dest: '/home/me/my_repo'
-  #   actor.action!
+  #   host.action!
   #
   class Host
     include Drama::Actions
