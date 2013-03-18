@@ -5,8 +5,8 @@ class Drama
   class Outcome < Hash
     include LogSwitch::Mixin
 
-    attr_reader :status
     attr_reader :ssh_output
+    attr_reader :status
 
     def initialize(ssh_output, status=nil)
       super()
@@ -24,13 +24,13 @@ class Drama
       end
     end
 
+    def error?
+      @ssh_output.is_a? Net::SSH::Simple::Error
+    end
+
     def status=(new_status)
       @status = new_status
       self[:status] = @status
-    end
-
-    def exception?
-      @ssh_output.success == false
     end
   end
 end
