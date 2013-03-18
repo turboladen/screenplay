@@ -85,7 +85,7 @@ class Drama
       @actions.each do |cmd|
         puts "Running command: '#{cmd.command}'".blue
         outcome = cmd.act(ssh, @config[:host])
-        puts "outcome: #{outcome}"
+        raise 'Outcome status was nil' if outcome[:status].nil?
 
         if outcome.status == :failed
           plan_failure(outcome.ssh_output, start_time)
