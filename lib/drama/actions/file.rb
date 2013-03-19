@@ -1,6 +1,5 @@
 require_relative '../action'
 require 'open-uri'
-require 'tempfile'
 
 
 class Drama
@@ -11,8 +10,8 @@ class Drama
         state: :exists,
         source: nil
       )
-        @source = source
         @path = path
+        @source = source
 
         command = case state
         when :absent then "rm -rf #{@path}"
@@ -28,12 +27,10 @@ class Drama
           source_file = if ::File.exists?(@source)
             @source
           else
-            f = Tempfile.new('drama')
-            f.write(open(@source).read)
-            f
+            open(@source)
           end
 
-          log ""
+          log "Uploading source file #{@source}"
           ssh.scp_ul(host, source_file, @path)
         end
 
