@@ -41,6 +41,10 @@ class Drama
 
       stage.action!
     end
+
+    def cleanup
+      # Does something need to happen here?
+    end
   end
 end
 
