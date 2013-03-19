@@ -8,15 +8,33 @@ class Drama
         path: path,
         state: :exists,
         owner: nil,
-        mode: nil
+        mode: nil,
+        sudo: false
       )
         command = case state
         when :absent
-          "rm -rf #{path} "
+          cmd = "rm -rf #{path} "
+          cmd = "sudo #{cmd}" if sudo
+          cmd
         when :exists
-          cmd = "#{file_exists?(path)} || mkdir -p #{path}"
-          cmd << %[ && chown #{owner} #{path} ] if owner
-          cmd << %[ && chmod #{mode} #{path} ] if mode
+          cmd = ''
+          cmd << 'sudo ' if sudo
+          cmd = "#{file_exists?(path)} || "
+          cmd << 'sudo ' if sudo
+          cmd << "mkdir -p #{path}"
+
+          if owner
+            cmd << ' && '
+            cmd << 'sudo ' if sudo
+            cmd << %[chown #{owner} #{path} ]
+          end
+
+          if mode
+            cmd << ' && '
+            cmd << 'sudo ' if sudo
+            cmd << %[chmod #{mode} #{path} ]
+          end
+
           cmd
         else
           raise "Unknown state: #{state}"
