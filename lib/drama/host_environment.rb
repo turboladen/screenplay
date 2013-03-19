@@ -20,6 +20,8 @@ class Drama
 
       @distribution = nil
       @distribution_version = nil
+
+      @shell = nil
     end
 
     def method_missing(meth, *args)
@@ -45,7 +47,17 @@ class Drama
         super
       end
 
-      return instance_variable_get("@#{meth}".to_sym)
+      instance_variable_get("@#{meth}".to_sym)
+    end
+
+    def shell
+      return @shell if @shell
+
+      command = 'echo $SHELL'
+      result = @ssh.ssh(@ssh_hostname, command)
+      log "STDOUT: #{result.stdout}"
+      %r[(?<shell>[a-z]+)$] =~ result.stdout
+      @shell = shell.to_sym
     end
 
     private
