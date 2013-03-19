@@ -74,7 +74,6 @@ class Drama
       log "...actions: #{@actions}"
       puts "Executing action on host '#{@config[:host]}'".blue
 
-      start_time = Time.now
 
       @actions.each do |cmd|
         run_action(cmd)
@@ -84,6 +83,8 @@ class Drama
     end
 
     def run_action(cmd)
+      start_time = Time.now
+
       puts "Running command: '#{cmd.command}'".blue
       outcome = cmd.act(ssh, @config[:host])
       raise 'Outcome status was nil' if outcome[:status].nil?
