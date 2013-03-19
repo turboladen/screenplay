@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.summary = 'FIX'
   s.description = %q(FIX)
 
+  s.required_ruby_version = '>= 2.0.0'
   s.required_rubygems_version = '>=2.0.0'
   s.files = Dir.glob('{lib,spec}/**/*') + Dir.glob('*.rdoc') +
     %w(.gemtest Gemfile drama.gemspec Rakefile)
