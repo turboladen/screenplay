@@ -8,9 +8,11 @@ class Drama
     include LogSwitch::Mixin
 
     attr_reader :command
+    attr_reader :fail_block
 
     def initialize(command)
       @command = command
+      @fail_block = nil
 
       log "command: #{@command}"
     end

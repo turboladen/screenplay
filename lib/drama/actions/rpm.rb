@@ -7,19 +7,26 @@ class Drama
       def initialize(
         package: package,
         state: :installed,
-        sudo: false
+        sudo: false,
+        on_fail: nil
       )
+        @on_fail = on_fail
+
         action = case state
         when :latest then '-Uvh'
-        when :installed then '-Uvh'
-        when :removed then '-e'
+        when :installed then '-ivh'
+        when :removed then '-evh'
         end
 
-        command = ''
-        command << 'sudo ' if sudo
-        command << "rpm #{action} #{package}"
+        commands = []
+        commands << "rpm -q #{package} || "
+        commands << "rpm #{action} #{package}"
 
-        super(command)
+        if sudo
+          commands.map! { |command| "sudo #{command}" }
+        end
+
+        super(commands.join(' '))
       end
 
       def act(ssh, host)
@@ -34,6 +41,11 @@ class Drama
             :updated
           end
         else
+          if outcome.ssh_output.stdout.match(/is not installed/) && @on_fail
+            puts 'Command failed; setting up to run failure block...'.yellow
+            @fail_block = @on_fail
+          end
+
           :failed
         end
 

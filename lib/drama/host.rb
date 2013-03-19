@@ -77,22 +77,38 @@ class Drama
       start_time = Time.now
 
       @actions.each do |cmd|
-        puts "Running command: '#{cmd.command}'".blue
-        outcome = cmd.act(ssh, @config[:host])
-        raise 'Outcome status was nil' if outcome[:status].nil?
-
-        if outcome.status == :failed
-          plan_failure(outcome.ssh_output, start_time)
-        elsif outcome.status == :no_change
-          puts "Drama finished [NO CHANGE]: '#{cmd.command}'".yellow
-        elsif outcome.status == :updated
-          puts "Drama finished [UPDATED]: '#{cmd.command}'".green
-        else
-          puts "WTF? status: #{outcome.status}".red
-        end
+        run_action(cmd)
       end
 
       puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
+    end
+
+    def run_action(cmd)
+      puts "Running command: '#{cmd.command}'".blue
+      outcome = cmd.act(ssh, @config[:host])
+      raise 'Outcome status was nil' if outcome[:status].nil?
+
+      if outcome.status == :failed
+        if cmd.fail_block
+          actions_before = @actions.size
+          cmd.fail_block.call
+          new_action_count = @actions.size - actions_before
+          puts "new actikon count: #{new_action_count}".light_green
+          new_actions = @actions.pop(new_action_count)
+
+          new_actions.each do |command|
+            run_action(command)
+          end
+        else
+          plan_failure(outcome.ssh_output, start_time)
+        end
+      elsif outcome.status == :no_change
+        puts "Drama finished [NO CHANGE]: '#{cmd.command}'".yellow
+      elsif outcome.status == :updated
+        puts "Drama finished [UPDATED]: '#{cmd.command}'".green
+      else
+        puts "WTF? status: #{outcome.status}".red
+      end
     end
 
     def play_part(part_class, **options)
