@@ -18,7 +18,7 @@ class Drama
         command << "#{@destination} || "
         command << "#{binary} clone "
         command << "--depth=#{depth} " if depth
-        command << "#{@destination}"
+        command << "#{repository} #{@destination}"
 
         super(command)
       end
