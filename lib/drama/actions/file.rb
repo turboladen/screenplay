@@ -22,7 +22,7 @@ class Drama
         super(command)
       end
 
-      def act(ssh, host)
+      def perform(hostname)
         if @source
           source_file = if ::File.exists?(@source)
             @source
@@ -37,10 +37,10 @@ class Drama
           end
 
           log "Uploading source file #{@source}"
-          ssh.scp_ul(host, source_file, @path)
+          Drama::Environment.hosts[hostname].ssh.upload(source_file, @path)
         end
 
-        outcome = run_command(ssh, host)
+        outcome = Drama::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code

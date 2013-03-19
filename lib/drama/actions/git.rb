@@ -23,8 +23,8 @@ class Drama
         super(command)
       end
 
-      def act(ssh, host)
-        outcome = run_command(ssh, host)
+      def perform(hostname)
+        outcome = Drama::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code

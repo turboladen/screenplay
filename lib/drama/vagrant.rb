@@ -1,5 +1,5 @@
 require 'vagrant'
-require_relative '../drama'
+require_relative 'environment'
 require_relative 'stage'
 
 
@@ -22,10 +22,10 @@ class Drama
     def provision!
       load 'Dramafile'
 
-      puts "stages: #{Drama.stages}"
+      puts "stages: #{Drama::Environment.stages}"
       puts "config stage: #{config.stage}"
 
-      stage_name = Drama.stages.find do |stage|
+      stage_name = Drama::Environment.stages.find do |stage|
         stage == config.stage || stage == config.stage.to_s
       end
 
@@ -33,11 +33,12 @@ class Drama
 
       klass = Drama.const_get(stage_name.capitalize)
       stage = klass.new
-      stage.build_commands
 
       stage.host_group.each do |name, host|
-        host.set ssh_key_path: env[:vm].env.default_private_key_path
+        host.ssh.set keys: [env[:vm].env.default_private_key_path]
       end
+
+      stage.build_commands
 
       stage.action!
     end

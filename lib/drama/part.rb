@@ -1,6 +1,6 @@
 class Drama
   class Part
-    def self.act(host, **options)
+    def self.play(host, **options)
       new(host, **options)
     end
 
@@ -8,7 +8,7 @@ class Drama
 
     def initialize(host, **options)
       @host = host
-      options.empty? ? act : act(**options)
+      options.empty? ? play : play(**options)
     end
 
     def method_missing(meth, *args, **options)

@@ -17,10 +17,9 @@ class Drama
         super(command)
       end
 
-      def act(ssh, host)
-        ssh.scp_ul(host, @source_file, @remote_file)
-
-        outcome = run_command(ssh, host)
+      def perform(hostname)
+        Drama::Environment.hosts[hostname].ssh.upload(@source_file, @remote_file)
+        outcome = Drama::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code

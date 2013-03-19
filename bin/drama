@@ -11,7 +11,7 @@ cli_stage = ARGV.first.to_s
 load file
 actors = []
 
-Drama.stages[cli_stage].each do |stage|
+Drama::Environment.stages[cli_stage].each do |stage|
   klass = Drama.const_get(stage.capitalize)
   actors << klass.new.build_commands
 end
