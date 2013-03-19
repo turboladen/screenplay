@@ -27,7 +27,13 @@ class Drama
           source_file = if ::File.exists?(@source)
             @source
           else
-            open(@source)
+            log "Getting remote source file from #{@source}"
+
+            begin
+              open(@source)
+            rescue OpenURI::HTTPError => ex
+              return Drama::Outcome.new(ex, :failed)
+            end
           end
 
           log "Uploading source file #{@source}"
