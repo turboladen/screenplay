@@ -11,20 +11,18 @@ class Drama
         on_fail: nil
       )
         @on_fail = on_fail
+        @package = package
 
         action = case state
         when :latest then '-Uvh'
         when :installed then '-ivh'
-        when :removed then '-evh'
+        when :removed then '-e'
         end
 
         commands = []
-        commands << "rpm -q #{package} || "
-        commands << "rpm #{action} #{package}"
-
-        if sudo
-          commands.map! { |command| "sudo #{command}" }
-        end
+        commands << "rpm -qa | grep #{@package} || "
+        commands << "rpm #{action} #{@package}"
+        commands.map! { |command| "sudo #{command}" } if sudo
 
         super(commands.join(' '))
       end
@@ -35,7 +33,7 @@ class Drama
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          if outcome.ssh_output.stdout.match /already installed and version/m
+          if outcome.ssh_output.stdout.match /#{@package}/m
             :no_change
           else
             :updated
