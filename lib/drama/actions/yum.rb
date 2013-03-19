@@ -6,9 +6,10 @@ class Drama
     class Yum < Drama::Action
       def initialize(
         package: nil,
-          state: :installed,
-          update_cache: false,
-          sudo: false
+        state: :installed,
+        update_cache: false,
+        upgrade: false,
+        sudo: false
       )
         action = case state
         when :latest then 'install'
@@ -18,6 +19,7 @@ class Drama
         end
 
         commands = []
+        commands << 'yum upgrade -y'              if upgrade
         commands << 'yum update -y'               if update_cache
         commands << "yum #{action} -y #{package}" if package
         commands.map! { |c| "sudo #{c}" }         if sudo
