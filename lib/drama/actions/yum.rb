@@ -5,7 +5,7 @@ class Drama
   module Actions
     class Yum < Drama::Action
       def initialize(
-        package: package,
+        package: nil,
           state: :installed,
           update_cache: false,
           sudo: false
@@ -17,15 +17,12 @@ class Drama
         when :removed then 'remove'
         end
 
-        command = ''
+        commands = []
+        commands << 'yum update -y'               if update_cache
+        commands << "yum #{action} -y #{package}" if package
+        commands.map! { |c| "sudo #{c}" }         if sudo
 
-        if update_cache
-          command << 'sudo '              if sudo
-          command << 'yum update && '
-        end
-
-        command << 'sudo '              if sudo
-        command << "yum #{action} -y #{package}"
+        command = commands.size == 1 ? commands.first : commands.join(' && ')
 
         super(command)
       end
@@ -36,7 +33,9 @@ class Drama
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          if outcome.ssh_output.stdout.match /already installed and latest version\nNothing to do/m
+          stdout = outcome.ssh_output.stdout
+          if stdout.match(/already installed and latest version\nNothing to do/m) ||
+            stdout.match(/No Packages marked for Update/m)
             :no_change
           else
             :updated
