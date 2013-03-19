@@ -2,6 +2,7 @@ require 'etc'
 require 'colorize'
 require 'net/ssh/simple'
 require_relative 'actions'
+require_relative 'host_environment'
 require_relative 'part'
 require_relative 'logger'
 
@@ -151,8 +152,8 @@ class Drama
       abort(error.red)
     end
 
-    def get_binding
-      binding
+    def env
+      @env ||= HostEnvironment.new(ssh, @config[:host])
     end
   end
 end
