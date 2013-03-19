@@ -15,7 +15,7 @@ class Drama
 
         action = case state
         when :latest then '-Uvh'
-        when :installed then '-ivh'
+        when :installed then '-Uvh'
         when :removed then '-e'
         end
 
@@ -39,7 +39,7 @@ class Drama
             :updated
           end
         else
-          if outcome.ssh_output.stdout.match(/is not installed/) && @on_fail
+          if @on_fail
             puts 'Command failed; setting up to run failure block...'.yellow
             @fail_block = @on_fail
           end
