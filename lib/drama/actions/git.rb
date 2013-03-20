@@ -8,9 +8,11 @@ class Drama
         repository: repository,
         destination: destination,
         binary: '/usr/bin/env git',
-        depth: nil
+        depth: nil,
+        on_fail: nil
       )
         @destination = destination
+        @on_fail = on_fail
 
         command = file_exists?(@destination) + ' && '
         command << "#{binary} pull "
@@ -35,6 +37,7 @@ class Drama
             :no_change
           end
         else
+          handle_on_fail
           :failed
         end
 

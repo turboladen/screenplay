@@ -7,9 +7,11 @@ class Drama
       def initialize(
         repository: repository,
         destination: destination,
-        binary: '/usr/bin/env svn'
+        binary: '/usr/bin/env svn',
+        on_fail: nil
       )
         @destination = destination
+        @on_fail = on_fail
 
         command = file_exists?(@destination) + ' && '
         command << "#{binary} update #{@destination} || "
@@ -30,6 +32,7 @@ class Drama
             :no_change
           end
         else
+          handle_on_fail
           :failed
         end
 

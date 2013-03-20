@@ -8,8 +8,11 @@ class Drama
         source: source,
         target: target,
         state: :exists,
-        symbolic: true
+        symbolic: true,
+        on_fail: nil
       )
+        @on_fail = on_fail
+
         command = case state
         when :absent then "rm -rf #{source}"
         when :exists then file_exists?(source)
@@ -27,6 +30,7 @@ class Drama
         when 0
           :updated
         else
+          handle_on_fail
           :failed
         end
 

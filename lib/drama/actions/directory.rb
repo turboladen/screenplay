@@ -9,8 +9,11 @@ class Drama
         state: :exists,
         owner: nil,
         mode: nil,
-        sudo: false
+        sudo: false,
+        on_fail: nil
       )
+        @on_fail = on_fail
+
         command = case state
         when :absent
           cmd = "rm -rf #{path} "
@@ -54,6 +57,7 @@ class Drama
           if outcome.ssh_output.stdout.match /File exists/
             :no_change
           else
+            handle_on_fail
             :failed
           end
         end

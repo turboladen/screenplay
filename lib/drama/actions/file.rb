@@ -8,10 +8,12 @@ class Drama
       def initialize(
         path: path,
         state: :exists,
-        source: nil
+        source: nil,
+        on_fail: nil
       )
         @path = path
         @source = source
+        @on_fail = on_fail
 
         command = case state
         when :absent then "rm -rf #{@path}"
@@ -32,6 +34,7 @@ class Drama
             begin
               open(@source)
             rescue OpenURI::HTTPError => ex
+              handle_on_fail
               return Drama::Outcome.new(ex, :failed)
             end
           end
@@ -47,6 +50,7 @@ class Drama
         when 0
           :updated
         else
+          handle_on_fail
           :failed
         end
 

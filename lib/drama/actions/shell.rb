@@ -4,7 +4,10 @@ require_relative '../action'
 class Drama
   module Actions
     class Shell < Drama::Action
-      def initialize(command: command)
+      def initialize(command: command, sudo: false, on_fail: nil)
+        @on_fail = on_fail
+        command = "sudo #{command}" if sudo
+
         super(command)
       end
 
@@ -16,6 +19,7 @@ class Drama
         when 0
           :updated
         else
+          handle_on_fail
           :failed
         end
 

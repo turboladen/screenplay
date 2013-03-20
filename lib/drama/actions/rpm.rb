@@ -39,11 +39,7 @@ class Drama
             :updated
           end
         else
-          if @on_fail
-            puts 'Command failed; setting up to run failure block...'.yellow
-            @fail_block = @on_fail
-          end
-
+          handle_on_fail
           :failed
         end
 

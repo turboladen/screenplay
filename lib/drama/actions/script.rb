@@ -6,7 +6,8 @@ class Drama
     class Script < Drama::Action
       def initialize(
         source_file: source_file,
-        args: nil
+        args: nil,
+        on_fail: nil
       )
         @remote_file = "/tmp/drama.#{Time.now.to_i}"
         @source_file = ::File.expand_path(source_file)
@@ -26,6 +27,7 @@ class Drama
         when 0
           :updated
         else
+          handle_on_fail
           :failed
         end
 

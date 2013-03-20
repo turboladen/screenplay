@@ -9,7 +9,8 @@ class Drama
         state: :installed,
         update_cache: false,
         upgrade: false,
-        sudo: false
+        sudo: false,
+        on_fail: nil
       )
         action = case state
         when :latest then 'install'
@@ -43,6 +44,7 @@ class Drama
             :updated
           end
         else
+          handle_on_fail
           :failed
         end
 

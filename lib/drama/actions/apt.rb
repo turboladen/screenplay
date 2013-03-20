@@ -9,8 +9,11 @@ class Drama
         package: package,
         state: :installed,
         update_cache: false,
-        sudo: false
+        sudo: false,
+        on_fail: nil
       )
+        @on_fail = on_fail
+
         action = case state
         when :latest then 'install'
           # install should just check to see if it's installed, not always install it
@@ -21,7 +24,7 @@ class Drama
         command = ''
 
         if update_cache
-          command << 'sudo '              if sudo
+          command << 'sudo '            if sudo
           command << 'apt-get update && '
         end
 
@@ -43,6 +46,7 @@ class Drama
             :updated
           end
         else
+          handle_on_fail
           :failed
         end
 

@@ -9,8 +9,11 @@ class Drama
         state: :installed,
         update: false,
         binary: '/usr/local/bin/brew',
-        force: false
+        force: false,
+        on_fail: nil
       )
+        @on_fail = on_fail
+
         action = case state
         when :latest then 'upgrade'
         when :installed then 'install'
@@ -40,6 +43,7 @@ class Drama
             :failed
           end
         else
+          handle_on_fail
           :failed
         end
 
