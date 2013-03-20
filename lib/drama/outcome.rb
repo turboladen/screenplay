@@ -1,7 +1,7 @@
 require_relative 'logger'
 
 
-class Drama
+class Screenplay
   class Outcome < Hash
     include LogSwitch::Mixin
 

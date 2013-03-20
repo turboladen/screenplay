@@ -3,10 +3,10 @@ require_relative 'environment'
 require_relative 'logger'
 
 
-class Drama
+class Screenplay
   module Stage
     def self.included(base)
-      Drama::Environment.stages << base.to_s.downcase.split('::').last
+      Screenplay::Environment.stages << base.to_s.downcase.split('::').last
     end
 
     attr_reader :host_group

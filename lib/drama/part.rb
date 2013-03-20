@@ -1,4 +1,4 @@
-class Drama
+class Screenplay
   class Part
     def self.play(host, **options)
       new(host, **options)

@@ -1,3 +1,3 @@
-class Drama
+class Screenplay
   VERSION = '0.1.0'
 end

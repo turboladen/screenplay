@@ -2,7 +2,7 @@ require_relative 'logger'
 require_relative 'environment'
 
 
-class Drama
+class Screenplay
   attr_reader :ssh_hostname
 
   class HostEnvironment
@@ -15,7 +15,7 @@ class Drama
       define_method(meth) do
         unless @operating_system && @kernel_version && @architecture
           command = 'uname -a'
-          outcome = Drama::Environment.hosts[@ssh_hostname].ssh.run(command)
+          outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
           extract_os(outcome)
         end
 
@@ -33,7 +33,7 @@ class Drama
             'sw_vers'
           end
 
-          outcome = Drama::Environment.hosts[@ssh_hostname].ssh.run(command)
+          outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
           extract_distribution(outcome)
         end
 
@@ -59,7 +59,7 @@ class Drama
       return @shell if @shell
 
       command = 'echo $SHELL'
-      outcome = Drama::Environment.hosts[@ssh_hostname].ssh.run(command)
+      outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
       log "STDOUT: #{outcome.ssh_output.stdout}"
       %r[(?<shell>[a-z]+)$] =~ outcome.ssh_output.stdout
       @shell = shell.to_sym

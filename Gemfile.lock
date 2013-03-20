@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    drama (0.1.0)
+    screenplay (0.1.0)
       blockenspiel
       colorize
       highline
@@ -19,7 +19,7 @@ GEM
     diff-lcs (1.2.1)
     erubis (2.7.0)
     ffi (1.4.0)
-    hashie (2.0.2)
+    hashie (2.0.3)
     highline (1.6.16)
     i18n (0.6.4)
     json (1.7.7)
@@ -64,10 +64,10 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (>= 1.0.1)
-  drama!
   rake
   redcarpet
   rspec (>= 2.12.0)
+  screenplay!
   simplecov
   vagrant (~> 1.0)
   yard (>= 0.7.2)

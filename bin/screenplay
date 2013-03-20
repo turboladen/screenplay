@@ -4,15 +4,15 @@
 # https://twitter.com/mitchellh/status/283014103189053442
 Signal.trap('INT') { exit 1 }
 
-require_relative '../lib/drama'
+require_relative '../lib/screenplay'
 
 file = 'Dramafile'
 cli_stage = ARGV.first.to_s
 load file
 actors = []
 
-Drama::Environment.stages[cli_stage].each do |stage|
-  klass = Drama.const_get(stage.capitalize)
+Screenplay::Environment.stages[cli_stage].each do |stage|
+  klass = Screenplay.const_get(stage.capitalize)
   actors << klass.new.build_commands
 end
 

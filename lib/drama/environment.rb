@@ -1,4 +1,4 @@
-class Drama
+class Screenplay
   class Environment
     def self.stages
       @stages ||= []

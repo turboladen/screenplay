@@ -1,9 +1,9 @@
 require_relative '../action'
 
 
-class Drama
+class Screenplay
   module Actions
-    class Yum < Drama::Action
+    class Yum < Screenplay::Action
       def initialize(
         package: nil,
         state: :installed,
@@ -34,7 +34,7 @@ class Drama
       end
 
       def perform(hostname)
-        outcome = Drama::Environment.hosts[hostname].ssh.run(@command)
+        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code

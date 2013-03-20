@@ -1,7 +1,7 @@
-drama
+screenplay
 =====
 
-* <http://github.com/turboladen/drama>
+* <http://github.com/turboladen/screenplay>
 
 DESCRIPTION:
 ------------
@@ -29,8 +29,8 @@ Gripes with those tools:
     * Ansible: 0
     * Chef: -1
     * Puppet: -1
-  * Drama:
-    * Just `gem install drama` on the box you want to run from.
+  * Screenplay:
+    * Just `gem install screenplay` on the box you want to run from.
 * I don't want to have to set anything up on the boxes I manage.  I should be
   able to do anything to that box using standard tools already on the box (like
   SSH).
@@ -38,7 +38,7 @@ Gripes with those tools:
     * Ansible: +1
     * Chef: -1
     * Puppet: -1
-  * Drama:
+  * Screenplay:
     * Does everything over SSH.
 * I want to install the tool from the box I'm going to run stuff from and that's
   it.  Reading tons of docs and setting up different boxes always seemed
@@ -47,9 +47,9 @@ Gripes with those tools:
     * Ansible: +1
     * Chef: +1 (chef-solo)
     * Puppet: -1
-  * Drama:
-    * Just `gem install drama` on the box you want to run from.
-    * "Scenes" (Drama's modules/manifests, cookbooks/recipes, playbooks) are
+  * Screenplay:
+    * Just `gem install screenplay` on the box you want to run from.
+    * "Scenes" (Screenplay's modules/manifests, cookbooks/recipes, playbooks) are
        pulled in from a local or remote path.  How you get the scenes there is
        up to you (use git, svn, ftp, scp, whatever).
 * I want to use a programming language for defining what it is I want to do.
@@ -61,7 +61,7 @@ Gripes with those tools:
     * Ansible: -1
     * Chef: +1
     * Puppet: -1
-  * Drama:
+  * Screenplay:
     * Just Ruby with a little DSL niceness (but not too much).
 
 
@@ -76,7 +76,7 @@ Actions available:
 * subversion
 
     %w[git-core curl openssl].each do |package|
-      Drama.apt pkg: package, state: :installed, update_cache: true
+      Screenplay.apt pkg: package, state: :installed, update_cache: true
     end
 
 ### Scenes ###
@@ -84,7 +84,7 @@ Actions available:
 (Not yet implemented, but should look something like this...)
 
     # rbenv.rb
-    class RbEnv < Drama::Scene
+    class RbEnv < Screenplay::Scene
       def act
         if remote_os.osx?
           brew pkg: 'git', state: :installed, update: true
@@ -121,11 +121,11 @@ Actions available:
     # setup_my_stuff.rb
     require 'rbenv.rb'
 
-    Drama.add_scene(RbEnv, host: '10.1.2.3', user: 'george')
+    Screenplay.add_scene(RbEnv, host: '10.1.2.3', user: 'george')
 
 
     # From the shell...
-    $ drama setup_my_stuff.rb
+    $ screenplay setup_my_stuff.rb
 
 REQUIREMENTS:
 -------------
@@ -140,7 +140,7 @@ REQUIREMENTS:
 INSTALL:
 --------
 
-* gem install drama
+* gem install screenplay
 
 DEVELOPERS:
 -----------

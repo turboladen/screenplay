@@ -2,7 +2,7 @@ require 'colorize'
 require_relative 'logger'
 
 
-class Drama
+class Screenplay
   class Action
     include LogSwitch::Mixin
 

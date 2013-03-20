@@ -1,8 +1,8 @@
 require 'log_switch'
 
-class Drama
+class Screenplay
   extend LogSwitch
   include LogSwitch::Mixin
 end
 
-Drama.log_class_name = true
+Screenplay.log_class_name = true

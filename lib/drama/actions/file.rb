@@ -2,9 +2,9 @@ require_relative '../action'
 require 'open-uri'
 
 
-class Drama
+class Screenplay
   module Actions
-    class File < Drama::Action
+    class File < Screenplay::Action
       def initialize(
         path: path,
         state: :exists,
@@ -35,15 +35,15 @@ class Drama
               open(@source)
             rescue OpenURI::HTTPError => ex
               handle_on_fail
-              return Drama::Outcome.new(ex, :failed)
+              return Screenplay::Outcome.new(ex, :failed)
             end
           end
 
           log "Uploading source file #{@source}"
-          Drama::Environment.hosts[hostname].ssh.upload(source_file, @path)
+          Screenplay::Environment.hosts[hostname].ssh.upload(source_file, @path)
         end
 
-        outcome = Drama::Environment.hosts[hostname].ssh.run(@command)
+        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code

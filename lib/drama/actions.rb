@@ -1,14 +1,14 @@
 Dir[File.dirname(__FILE__) + '/actions/*.rb'].each(&method(:require))
 
 
-class Drama
+class Screenplay
   # Actions provides methods to all types of classes included in the
-  # Drama::Actions module.  It defines a method based on the class name.
+  # Screenplay::Actions module.  It defines a method based on the class name.
   # Include this into any class to gain access to the commands.
   module Actions
-    Drama::Actions.constants.each do |action_class|
+    Screenplay::Actions.constants.each do |action_class|
       define_method(action_class.to_s.downcase.to_sym) do |**options, &block|
-        klass = Drama::Actions.const_get(action_class)
+        klass = Screenplay::Actions.const_get(action_class)
         @actions << klass.new(**options, &block)
       end
     end

@@ -2,10 +2,10 @@ require './lib/drama/version'
 
 
 Gem::Specification.new do |s| 
-  s.name = 'drama'
-  s.version = Drama::VERSION
+  s.name = 'screenplay'
+  s.version = Screenplay::VERSION
   s.author = 'Steve Loveless'
-  s.homepage = 'http://github.com/turboladen/drama'
+  s.homepage = 'http://github.com/turboladen/screenplay'
   s.email = 'steve.loveless@gmail.com'
   s.summary = 'FIX'
   s.description = %q(FIX)
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
   s.required_rubygems_version = '>=2.0.0'
   s.files = Dir.glob('{lib,spec}/**/*') + Dir.glob('*.rdoc') +
-    %w(.gemtest Gemfile drama.gemspec Rakefile)
+    %w(.gemtest Gemfile screenplay.gemspec Rakefile)
   s.test_files = Dir.glob('{spec}/**/*')
   s.require_paths = ['lib']
 

@@ -7,11 +7,11 @@ require_relative 'host_environment'
 require_relative 'part'
 
 
-class Drama
+class Screenplay
 
-  # An Host runs Drama::Actions on a remote host.
+  # An Host runs Screenplay::Actions on a remote host.
   #
-  #   host = Drama::Host.new 'my_box'
+  #   host = Screenplay::Host.new 'my_box'
   #
   #   host.brew formula: 'rbenv'
   #   host.subversion repository: 'http://entmenu.googlecode.com/svn/trunk/',
@@ -25,7 +25,7 @@ class Drama
   #   host.action!
   #
   class Host
-    include Drama::Actions
+    include Screenplay::Actions
     include LogSwitch::Mixin
 
     attr_reader :hostname
@@ -38,15 +38,15 @@ class Drama
       @ssh_options = ssh_options
 
       log "Initialized for host: #{@hostname}"
-      Drama::Environment.hosts[hostname] = self
+      Screenplay::Environment.hosts[hostname] = self
     end
 
     def ssh
-      @ssh ||= Drama::SSH.new(@hostname, @ssh_options)
+      @ssh ||= Screenplay::SSH.new(@hostname, @ssh_options)
     end
 
     def env
-      @env ||= Drama::HostEnvironment.new(ssh, @hostname)
+      @env ||= Screenplay::HostEnvironment.new(ssh, @hostname)
     end
 
     def action!
@@ -62,7 +62,7 @@ class Drama
         run_action(cmd)
       end
 
-      puts "Drama finished performing\nTotal Duration: #{Time.now - start_time}".green
+      puts "Screenplay finished performing\nTotal Duration: #{Time.now - start_time}".green
     end
 
     def run_action(action)
@@ -85,9 +85,9 @@ class Drama
           plan_failure(outcome.ssh_output)
         end
       elsif outcome.status == :no_change
-        puts "Drama finished [NO CHANGE]: '#{action.command}'".yellow
+        puts "Screenplay finished [NO CHANGE]: '#{action.command}'".yellow
       elsif outcome.status == :updated
-        puts "Drama finished [UPDATED]: '#{action.command}'".green
+        puts "Screenplay finished [UPDATED]: '#{action.command}'".green
       else
         puts "WTF? status: #{outcome.status}".red
       end
@@ -98,11 +98,11 @@ class Drama
     end
 
     def drama_failure(exception)
-      log "Drama Failure: #{exception}"
+      log "Screenplay Failure: #{exception}"
 
       if exception.result.success
         error = <<-ERROR
-*** Drama Error! ***
+*** Screenplay Error! ***
 * Exception: #{exception.wrapped}
 * Exception class: #{exception.wrapped.class}
 * Plan duration: #{exception.result.finish_at - exception.result.start_at || 0}
@@ -121,7 +121,7 @@ class Drama
       log "Plan Failure: #{output}"
 
       error = <<-ERROR
-*** Drama Plan Failure! ***
+*** Screenplay Plan Failure! ***
 * Plan failed: #{output.cmd}
 * Exit code: #{output.exit_code}
 * Plan Duration: #{output.finish_at - output.start_at}

@@ -4,7 +4,7 @@ require_relative 'logger'
 require_relative 'outcome'
 
 
-class Drama
+class Screenplay
   class SSH
     include LogSwitch::Mixin
 
@@ -45,10 +45,10 @@ class Drama
             puts 'Finished executing command.'.light_blue
           end
         end
-        Drama::Outcome.new(output)
+        Screenplay::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
         log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
-        Drama::Outcome.new(ex, :failed)
+        Screenplay::Outcome.new(ex, :failed)
       end
 
       log "Outcome: #{outcome}"
