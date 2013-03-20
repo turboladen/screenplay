@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     screenplay (0.1.0)
-      blockenspiel
       colorize
       highline
       log_switch
@@ -25,7 +24,7 @@ GEM
     json (1.7.7)
     log4r (1.1.10)
     log_switch (0.4.0)
-    multi_json (1.6.1)
+    multi_json (1.7.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.2.2)

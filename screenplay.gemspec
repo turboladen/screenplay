@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   %w[
-    blockenspiel
     colorize
     highline
     log_switch

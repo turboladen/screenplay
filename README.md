@@ -132,7 +132,6 @@ REQUIREMENTS:
 
 * Ruby 2.0.0
 * RubyGems
-  * blockenspiel
   * colorize
   * highline
   * net-ssh-simple
