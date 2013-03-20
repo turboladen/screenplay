@@ -1,4 +1,4 @@
-require './lib/drama/version'
+require './lib/screenplay/version'
 
 
 Gem::Specification.new do |s| 
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.files = Dir.glob('{lib,spec}/**/*') + Dir.glob('*.rdoc') +
     %w(.gemtest Gemfile screenplay.gemspec Rakefile)
   s.test_files = Dir.glob('{spec}/**/*')
-  s.require_paths = ['lib']
+  s.require_paths = %w[lib]
 
   %w[
     colorize
