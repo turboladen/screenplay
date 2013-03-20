@@ -12,7 +12,7 @@ class Drama
     def initialize(command)
       @command = command
       @fail_block = nil
-      @on_fail = nil
+      @on_fail ||= nil
 
       log "command: #{@command}"
     end
