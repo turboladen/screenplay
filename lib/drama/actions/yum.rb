@@ -12,6 +12,9 @@ class Drama
         sudo: false,
         on_fail: nil
       )
+        @package = package
+        @on_fail = on_fail
+
         action = case state
         when :latest then 'install'
           # install should just check to see if it's installed, not always install it
@@ -37,11 +40,10 @@ class Drama
         outcome.status = case outcome.ssh_output.exit_code
         when 0
           stdout = outcome.ssh_output.stdout
-          if stdout.match(/already installed and latest version\nNothing to do/m) ||
-            stdout.match(/No Packages marked for Update/m)
-            :no_change
-          else
+          if stdout.match(/Installed:\s+#{@package}/)
             :updated
+          else
+            :no_change
           end
         else
           handle_on_fail
