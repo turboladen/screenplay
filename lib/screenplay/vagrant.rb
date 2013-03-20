@@ -24,15 +24,7 @@ class Screenplay
 
       puts "stages: #{Screenplay::Environment.stages}"
       puts "config stage: #{config.stage}"
-
-      stage_name = Screenplay::Environment.stages.find do |stage|
-        stage == config.stage || stage == config.stage.to_s
-      end
-
       abort "No stages found that match stage '#{config.stage}'" if stage_name.empty?
-
-      klass = Screenplay.const_get(stage_name.capitalize)
-      stage = klass.new
 
       stage.host_group.each do |name, host|
         host.ssh.set keys: [env[:vm].env.default_private_key_path]
@@ -44,7 +36,24 @@ class Screenplay
     end
 
     def cleanup
-      # Does something need to happen here?
+      @stage.host_group.each do |name, host|
+        host.ssh.close
+      end
+    end
+
+    private
+
+    def stage_name
+      @stage_name ||= Screenplay::Environment.stages.find do |stage|
+        stage == config.stage || stage == config.stage.to_s
+      end
+    end
+
+    def stage
+      return @stage if @stage
+
+      klass = Screenplay.const_get(stage_name.capitalize)
+      @stage = klass.new
     end
   end
 end
