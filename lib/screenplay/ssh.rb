@@ -69,10 +69,10 @@ class Screenplay
     #   those settings as well.
     # @return [Screenplay::Outcome]
     def run(command, **ssh_options)
-      @options.merge! ssh_options
+      new_options = @options.merge(ssh_options)
 
       outcome = begin
-        output = @ssh.ssh(@hostname, command, ssh_options, &ssh_block)
+        output = @ssh.ssh(@hostname, command, new_options, &ssh_block)
         Screenplay::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
         log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
@@ -92,10 +92,10 @@ class Screenplay
     #   those settings as well.
     # @return [Screenplay::Outcome]
     def upload(source, destination, **ssh_options)
-      @options.merge! ssh_options
+      new_options = @options.merge(ssh_options)
 
       outcome = begin
-        @ssh.scp_ul(@hostname, source, destination, ssh_options, &ssh_block)
+        output = @ssh.scp_ul(@hostname, source, destination, new_options, &ssh_block)
         Screenplay::Outcome.new(output)
       rescue Net::SSH::Simple::Error => ex
         log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
