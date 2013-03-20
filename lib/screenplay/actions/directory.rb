@@ -54,7 +54,7 @@ class Screenplay
         when 0
           :updated
         else
-          if outcome.ssh_output.stdout.match /File exists/
+          if outcome.ssh_output.stdout.match(/File exists/)
             :no_change
           else
             handle_on_fail

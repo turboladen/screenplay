@@ -5,6 +5,8 @@ require_relative 'logger'
 
 class Screenplay
   module Stage
+    include LogSwitch::Mixin
+
     def self.included(base)
       Screenplay::Environment.stages << base.to_s.downcase.split('::').last
     end
@@ -13,6 +15,7 @@ class Screenplay
 
     def action!
       @host_group.each do |name, host|
+        log "Action! for host '#{name}'"
         host.action!
       end
     end

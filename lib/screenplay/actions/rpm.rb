@@ -3,44 +3,40 @@ require_relative '../action'
 
 class Screenplay
   module Actions
-    class Brew < Screenplay::Action
+    class Rpm < Screenplay::Action
       def initialize(
-        formula: formula,
+        package: package,
         state: :installed,
-        update: false,
-        binary: '/usr/local/bin/brew',
-        force: false,
+        sudo: false,
         on_fail: nil
       )
         @on_fail = on_fail
+        @package = package
 
         action = case state
-        when :latest then 'upgrade'
-        when :installed then 'install'
-        when :removed then 'remove'
+        when :latest then '-Uvh'
+        when :installed then '-Uvh'
+        when :removed then '-e'
         end
 
-        command = ''
-        command << "#{binary} update && "  if update
-        command << "#{binary} #{action} #{formula}"
-        command << ' --force'                   if force
+        commands = []
+        commands << "rpm -qa | grep #{@package} || "
+        commands << "rpm #{action} #{@package}"
+        commands.map! { |command| "sudo #{command}" } if sudo
 
-        super(command)
+        super(commands.join(' '))
       end
 
-      # @return [Hash]
       def perform(hostname)
         outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
         return outcome if outcome.error?
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          :updated
-        when 1
-          if outcome.ssh_output.stdout.match /already installed/
+          if outcome.ssh_output.stdout.match(/#{@package}/m)
             :no_change
           else
-            :failed
+            :updated
           end
         else
           handle_on_fail

@@ -1,30 +1,37 @@
 require_relative '../action'
+require_relative '../environment'
 
 
 class Screenplay
   module Actions
-    class Rpm < Screenplay::Action
+    class Apt < Screenplay::Action
       def initialize(
         package: package,
         state: :installed,
+        update_cache: false,
         sudo: false,
         on_fail: nil
       )
         @on_fail = on_fail
-        @package = package
 
         action = case state
-        when :latest then '-Uvh'
-        when :installed then '-Uvh'
-        when :removed then '-e'
+        when :latest then 'install'
+          # install should just check to see if it's installed, not always install it
+        when :installed then 'install'
+        when :removed then 'remove'
         end
 
-        commands = []
-        commands << "rpm -qa | grep #{@package} || "
-        commands << "rpm #{action} #{@package}"
-        commands.map! { |command| "sudo #{command}" } if sudo
+        command = ''
 
-        super(commands.join(' '))
+        if update_cache
+          command << 'sudo '            if sudo
+          command << 'apt-get update && '
+        end
+
+        command << 'sudo '              if sudo
+        command << "apt-get #{action} #{package}"
+
+        super(command)
       end
 
       def perform(hostname)
@@ -33,7 +40,7 @@ class Screenplay
 
         outcome.status = case outcome.ssh_output.exit_code
         when 0
-          if outcome.ssh_output.stdout.match /#{@package}/m
+          if outcome.ssh_output.stdout.match(/is already the newest version/m)
             :no_change
           else
             :updated
