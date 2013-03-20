@@ -12,6 +12,15 @@ class Screenplay
   #
   # Any options passed in to #initialize or set using #set will be used with
   # subsequent #run or #upload commands.
+  #
+  # Example use:
+  #   ssh = Screenplay::SSH.new '10.0.0.1', keys: [Dir.home + '/.ssh/keyfile'], port: 2222
+  #   ssh.options     # => { :keys=>["/Users/me/.ssh/keyfile"], :port=>2222, :user=>"me", :timeout=>1800 }
+  #   ssh.upload 'pretty_picture.jpg', '/var/www/pretty_things/current/images/'
+  #   ssh.set user: 'deploy'
+  #   ssh.unset :keys
+  #   ssh.run 'touch /var/www/pretty_things/current/tmp/restart.txt'
+  #
   class SSH
     include LogSwitch::Mixin
 
@@ -33,12 +42,23 @@ class Screenplay
       @ssh = Net::SSH::Simple.new(@options)
     end
 
-    # Easy way to set an SSH option.
+    # Easy way to set a(n) SSH option(s).
     #
     # @param [Hash] options Net::SSH::Simple options.
     def set(**options)
       log "Adding options: #{options}"
       @options.merge! options
+    end
+
+    # Easy way to unset a(n) SSH option(s).
+    #
+    # @param [Array<Symbol>] option_keys One or many SSH options to unset.
+    def unset(*option_keys)
+      log "Unsetting options: #{option_keys}"
+
+      option_keys.each do |key|
+        @options.delete(key)
+      end
     end
 
     # Runs +command+ on the host for which this SSH object is connected to.
