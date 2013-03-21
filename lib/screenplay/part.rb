@@ -10,8 +10,15 @@ class Screenplay
   # using a Screenplay::Host, and the Host can then run all of the actions in
   # the Part, simply by calling #play_part on the Host object.
   #
-  # A port of Opscode's MySQL Server Part could look something like:
+  # The only requirement for your Parts are that they a) inherit from this class
+  # and b) define a #play method.
   #
+  # There is a gem of popular Parts, +screenplay-parts+ that might be useful to
+  # you...
+  #
+  # @example A partial MySQL part
+  #
+  #   # A port of Opscode's MySQL Server Part could look something like:
   #   class MySQL < Screenplay::Part
   #     # Define this here, or in some other file.  And use some other Ruby
   #     # feature other than a constant--it's up to you.
@@ -37,19 +44,28 @@ class Screenplay
   #           host.template path: "#{conf_dir}/debian.cnf", source: 'mysql-server.seed.erb',
   #             owner: 'root', group: root_group, mode: '0600'
   #
+  #           host.apt package: PACKAGES[host.env.distribution]
   #         when :centos
   #           # Etc
   #         end
   #       when :darwin
   #           # Etc
   #       end
+  #
   #     end
   #
   #     # Add any helper methods too, if you want to refactor #play...
   #   end
   #
-  # The only requirement for your Parts are that they a) inherit from this class
-  # and b) define a #play method.
+  #   # Then your Host object could use that by:
+  #
+  #   host = Screenplay::Host.new('localhost')
+  #
+  #   # Use the default values defined for MySQL#play
+  #   host.play_part MySQL
+  #
+  #   # Pass in other values
+  #   host.play_part MySQL, conf_dir: '/opt/mysql/conf', root_group: 'admin'
   class Part
 
     # @param [Screenplay::Host] host The host that should play the part.
