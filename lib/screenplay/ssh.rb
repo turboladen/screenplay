@@ -106,6 +106,11 @@ class Screenplay
       result
     end
 
+    # Closes the SSH connection and cleans up.
+    def close
+      @ssh.close
+    end
+
     private
 
     # DRYed up block to hand over to SSH commands for keeping handling of stdout
