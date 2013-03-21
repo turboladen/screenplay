@@ -1,8 +1,12 @@
+require 'json'
+require 'yaml'
 require_relative 'logger'
 
 
 class Screenplay
-  class Outcome < Hash
+
+  #
+  class ActionResult < Hash
     include LogSwitch::Mixin
 
     attr_reader :ssh_output

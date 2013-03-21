@@ -26,12 +26,12 @@ class Screenplay
       end
 
       def perform(hostname)
-        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
-        return outcome if outcome.error?
+        result = Screenplay::Environment.hosts[hostname].ssh.run(@command)
+        return result if result.error?
 
-        outcome.status = case outcome.ssh_output.exit_code
+        result.status = case result.ssh_output.exit_code
         when 0
-          if outcome.ssh_output.stdout.match(/[A-Za-z]\s+#{@destination}/m)
+          if result.ssh_output.stdout.match(/[A-Za-z]\s+#{@destination}/m)
             :updated
           else
             :no_change
@@ -41,7 +41,7 @@ class Screenplay
           :failed
         end
 
-        outcome
+        result
       end
     end
   end

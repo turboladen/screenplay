@@ -15,8 +15,8 @@ class Screenplay
       define_method(meth) do
         unless @operating_system && @kernel_version && @architecture
           command = 'uname -a'
-          outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
-          extract_os(outcome)
+          result = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
+          extract_os(result)
         end
 
         instance_variable_get("@#{meth}".to_sym)
@@ -33,8 +33,8 @@ class Screenplay
             'sw_vers'
           end
 
-          outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
-          extract_distribution(outcome)
+          result = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
+          extract_distribution(result)
         end
 
         instance_variable_get("@#{meth}".to_sym)
@@ -59,18 +59,18 @@ class Screenplay
       return @shell if @shell
 
       command = 'echo $SHELL'
-      outcome = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
-      log "STDOUT: #{outcome.ssh_output.stdout}"
-      %r[(?<shell>[a-z]+)$] =~ outcome.ssh_output.stdout
+      result = Screenplay::Environment.hosts[@ssh_hostname].ssh.run(command)
+      log "STDOUT: #{result.ssh_output.stdout}"
+      %r[(?<shell>[a-z]+)$] =~ result.ssh_output.stdout
       @shell = shell.to_sym
     end
 
     private
 
-    def extract_os(outcome)
-      log "STDOUT: #{outcome.ssh_output.stdout}"
+    def extract_os(result)
+      log "STDOUT: #{result.ssh_output.stdout}"
 
-      %r[^(?<os>[a-zA-Z]+) (?<uname>.*)] =~ outcome.ssh_output.stdout
+      %r[^(?<os>[a-zA-Z]+) (?<uname>.*)] =~ result.ssh_output.stdout
       @operating_system = os.downcase.to_sym
 
       case @operating_system
@@ -84,15 +84,15 @@ class Screenplay
       @architecture = arch.downcase.to_sym
     end
 
-    def extract_distribution(outcome)
-      log "STDOUT: #{outcome.ssh_output.stdout}"
+    def extract_distribution(result)
+      log "STDOUT: #{result.ssh_output.stdout}"
 
       case @operating_system
       when :darwin
-        %r[ProductVersion:\s+(?<version>\S+)] =~ outcome.ssh_output.stdout
+        %r[ProductVersion:\s+(?<version>\S+)] =~ result.ssh_output.stdout
         distro = :osx
       when :linux
-        %r[Description:\s+(?<distro>\w+)\s+release\s+(?<version>\S+)] =~ outcome.ssh_output.stdout
+        %r[Description:\s+(?<distro>\w+)\s+release\s+(?<version>\S+)] =~ result.ssh_output.stdout
       end
 
       @distribution = distro.downcase.to_sym

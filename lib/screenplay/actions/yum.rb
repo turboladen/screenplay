@@ -34,12 +34,12 @@ class Screenplay
       end
 
       def perform(hostname)
-        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
-        return outcome if outcome.error?
+        result = Screenplay::Environment.hosts[hostname].ssh.run(@command)
+        return result if result.error?
 
-        outcome.status = case outcome.ssh_output.exit_code
+        result.status = case result.ssh_output.exit_code
         when 0
-          stdout = outcome.ssh_output.stdout
+          stdout = result.ssh_output.stdout
           if stdout.match(/Installed:\s+#{@package}/)
             :updated
           else
@@ -50,7 +50,7 @@ class Screenplay
           :failed
         end
 
-        outcome
+        result
       end
     end
   end

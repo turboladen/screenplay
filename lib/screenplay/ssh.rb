@@ -1,7 +1,7 @@
 require 'etc'
 require 'net/ssh/simple'
 require_relative 'logger'
-require_relative 'outcome'
+require_relative 'action_result'
 
 
 class Screenplay
@@ -67,20 +67,20 @@ class Screenplay
     # @param [Hash] ssh_options Net::SSH::Simple options.  These will get merged
     #   with options set in #initialize and via #set.  Can be used to override
     #   those settings as well.
-    # @return [Screenplay::Outcome]
+    # @return [Screenplay::ActionResult]
     def run(command, **ssh_options)
       new_options = @options.merge(ssh_options)
 
-      outcome = begin
+      result = begin
         output = @ssh.ssh(@hostname, command, new_options, &ssh_block)
-        Screenplay::Outcome.new(output)
+        Screenplay::ActionResult.new(output)
       rescue Net::SSH::Simple::Error => ex
         log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
-        Screenplay::Outcome.new(ex, :failed)
+        Screenplay::ActionResult.new(ex, :failed)
       end
 
-      log "SSH run outcome: #{outcome}"
-      outcome
+      log "SSH run result: #{result}"
+      result
     end
 
     # Uploads +source+ file to the +destination+ path on the remote box.
@@ -90,20 +90,20 @@ class Screenplay
     # @param [Hash] ssh_options Net::SSH::Simple options.  These will get merged
     #   with options set in #initialize and via #set.  Can be used to override
     #   those settings as well.
-    # @return [Screenplay::Outcome]
+    # @return [Screenplay::ActionResult]
     def upload(source, destination, **ssh_options)
       new_options = @options.merge(ssh_options)
 
-      outcome = begin
+      result = begin
         output = @ssh.scp_ul(@hostname, source, destination, new_options, &ssh_block)
-        Screenplay::Outcome.new(output)
+        Screenplay::ActionResult.new(output)
       rescue Net::SSH::Simple::Error => ex
         log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
-        Screenplay::Outcome.new(ex, :failed)
+        Screenplay::ActionResult.new(ex, :failed)
       end
 
-      log "SCP upload outcome: #{outcome}"
-      outcome
+      log "SCP upload result: #{result}"
+      result
     end
 
     private

@@ -67,10 +67,10 @@ class Screenplay
 
     def run_action(action)
       puts "Running command: '#{action.command}'".blue
-      outcome = action.perform(@hostname)
-      raise 'Outcome status was nil' if outcome[:status].nil?
+      result = action.perform(@hostname)
+      raise 'Action result status was nil' if result[:status].nil?
 
-      if outcome.status == :failed
+      if result.status == :failed
         if action.fail_block
           actions_before = @actions.size
           action.fail_block.call
@@ -82,14 +82,14 @@ class Screenplay
             run_action(command)
           end
         else
-          plan_failure(outcome.ssh_output)
+          plan_failure(result.ssh_output)
         end
-      elsif outcome.status == :no_change
+      elsif result.status == :no_change
         puts "Screenplay finished [NO CHANGE]: '#{action.command}'".yellow
-      elsif outcome.status == :updated
+      elsif result.status == :updated
         puts "Screenplay finished [UPDATED]: '#{action.command}'".green
       else
-        puts "WTF? status: #{outcome.status}".red
+        puts "WTF? status: #{result.status}".red
       end
     end
 

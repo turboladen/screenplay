@@ -47,14 +47,14 @@ class Screenplay
       end
 
       def perform(hostname)
-        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
-        return outcome if outcome.error?
+        result = Screenplay::Environment.hosts[hostname].ssh.run(@command)
+        return result if result.error?
 
-        outcome.status = case outcome.ssh_output.exit_code
+        result.status = case result.ssh_output.exit_code
         when 0
           :updated
         else
-          if outcome.ssh_output.stdout.match(/File exists/)
+          if result.ssh_output.stdout.match(/File exists/)
             :no_change
           else
             handle_on_fail
@@ -62,7 +62,7 @@ class Screenplay
           end
         end
 
-        outcome
+        result
       end
     end
   end

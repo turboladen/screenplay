@@ -7,7 +7,7 @@ describe Screenplay::SSH do
   end
 
   let(:hostname) { 'testhost' }
-  let(:outcome) { double 'Screenplay::Outcome' }
+  let(:outcome) { double 'Screenplay::ActionResult' }
   let(:ssh_output) { double 'SSH command output' }
 
   subject do
@@ -82,7 +82,7 @@ describe Screenplay::SSH do
 
   describe '#run' do
     context 'with no options' do
-      it 'runs the command and returns an Outcome object' do
+      it 'runs the command and returns an ActionResult object' do
         expected_options = {
           user: Etc.getlogin,
           timeout: 1800
@@ -91,7 +91,7 @@ describe Screenplay::SSH do
         ssh.should_receive(:ssh).
           with(hostname, 'test command', expected_options).
           and_return ssh_output
-        Screenplay::Outcome.should_receive(:new).with(ssh_output).and_return outcome
+        Screenplay::ActionResult.should_receive(:new).with(ssh_output).and_return outcome
 
         o = subject.run 'test command'
         o.should == outcome
@@ -113,7 +113,7 @@ describe Screenplay::SSH do
 
         ssh.should_receive(:ssh).
           with(hostname, 'test command', expected_options).and_return ssh_output
-        Screenplay::Outcome.should_receive(:new).with(ssh_output).and_return outcome
+        Screenplay::ActionResult.should_receive(:new).with(ssh_output).and_return outcome
 
         subject.run 'test command', options
       end
@@ -122,7 +122,7 @@ describe Screenplay::SSH do
 
   describe '#upload' do
     context 'with no options' do
-      it 'runs the command and returns an Outcome object' do
+      it 'runs the command and returns an ActionResult object' do
         expected_options = {
           user: Etc.getlogin,
           timeout: 1800
@@ -131,7 +131,7 @@ describe Screenplay::SSH do
         ssh.should_receive(:scp_ul).
           with(hostname, 'test file', '/destination', expected_options).
           and_return ssh_output
-        Screenplay::Outcome.should_receive(:new).with(ssh_output).and_return outcome
+        Screenplay::ActionResult.should_receive(:new).with(ssh_output).and_return outcome
 
         o = subject.upload 'test file', '/destination'
         o.should == outcome
@@ -154,7 +154,7 @@ describe Screenplay::SSH do
         ssh.should_receive(:scp_ul).
           with(hostname, 'test file', '/destination', expected_options).
           and_return ssh_output
-        Screenplay::Outcome.should_receive(:new).with(ssh_output).and_return outcome
+        Screenplay::ActionResult.should_receive(:new).with(ssh_output).and_return outcome
 
         subject.upload 'test file', '/destination', options
       end

@@ -35,7 +35,7 @@ class Screenplay
               open(@source)
             rescue OpenURI::HTTPError => ex
               handle_on_fail
-              return Screenplay::Outcome.new(ex, :failed)
+              return Screenplay::ActionResult.new(ex, :failed)
             end
           end
 
@@ -43,10 +43,10 @@ class Screenplay
           Screenplay::Environment.hosts[hostname].ssh.upload(source_file, @path)
         end
 
-        outcome = Screenplay::Environment.hosts[hostname].ssh.run(@command)
-        return outcome if outcome.error?
+        result = Screenplay::Environment.hosts[hostname].ssh.run(@command)
+        return result if result.error?
 
-        outcome.status = case outcome.ssh_output.exit_code
+        result.status = case result.ssh_output.exit_code
         when 0
           :updated
         else
@@ -54,7 +54,7 @@ class Screenplay
           :failed
         end
 
-        outcome
+        result
       end
     end
   end
