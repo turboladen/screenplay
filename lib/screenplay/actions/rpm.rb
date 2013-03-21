@@ -3,6 +3,7 @@ require_relative '../action'
 
 class Screenplay
   module Actions
+    # @todo source: lets you point to a URL instead of using on_fail
     class Rpm < Screenplay::Action
       def initialize(
         package: package,
