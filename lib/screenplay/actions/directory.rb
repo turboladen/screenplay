@@ -3,6 +3,7 @@ require_relative '../action'
 
 class Screenplay
   module Actions
+    # @todo Add group: param
     class Directory < Screenplay::Action
       def initialize(
         path: path,
