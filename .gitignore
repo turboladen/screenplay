@@ -3,6 +3,7 @@
 .bundle
 .config
 .idea/
+.vagrant/
 
 atlassian-ide-plugin.xml
 coverage
