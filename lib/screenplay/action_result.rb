@@ -1,5 +1,6 @@
 require 'json'
 require 'yaml'
+require 'net/ssh/simple'
 
 
 class Screenplay
@@ -9,7 +10,6 @@ class Screenplay
   # and accessible through #exception so that consumers can deal with the error
   # later.
   class ActionResult
-    include LogSwitch::Mixin
 
     # @return [Symbol] Used by Screenplay to determine if the command
     #   succeeded or not.  Options are +:updated+, +:no_change+, or +:failed+.
@@ -52,7 +52,7 @@ class Screenplay
     # @param [Symbol] status Used by Screenplay to determine if the command
     #   succeeded or not.  Options are +:updated+, +:no_change+, or +:failed+.
     def initialize(ssh_output, status=nil)
-      if ssh_output.is_a? Net::SSH::Simple::Error
+      if ssh_output.is_a? ::Net::SSH::Simple::Error
         @exception = ssh_output.wrapped
         ssh_output = ssh_output.result
         status = :failure
