@@ -12,8 +12,16 @@ describe Screenplay::Part do
     end
   end
 
+  subject do
+    Screenplay::Part.new(host)
+  end
+
   describe '#initialize' do
-    its(:host) { eq(host) }
+    it 'has #host available as the host that was passed in' do
+      Screenplay::Part.any_instance.stub(:play)
+      part = Screenplay::Part.new(host)
+      part.host.should == host
+    end
 
     context 'no options/params passed in' do
       it 'calls #play with no args' do
