@@ -1,7 +1,7 @@
-require 'screenplay/host_environment'
+require 'screenplay/host/environment'
 
 
-describe Screenplay::HostEnvironment do
+describe Screenplay::Host::Environment do
   let(:ssh_hostname) { 'test' }
 
   let(:ssh) do
@@ -13,7 +13,7 @@ describe Screenplay::HostEnvironment do
   end
 
   subject do
-    Screenplay::HostEnvironment.new(ssh_hostname)
+    Screenplay::Environment.new(ssh_hostname)
   end
 
   before do
