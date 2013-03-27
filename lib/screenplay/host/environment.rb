@@ -1,6 +1,6 @@
 require_relative '../logger'
 require_relative '../environment'
-require_relative '../string_refinements'
+require_relative 'string_refinements'
 
 using Screenplay::StringRefinements
 
