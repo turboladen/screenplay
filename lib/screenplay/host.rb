@@ -4,6 +4,7 @@ require_relative 'ssh'
 require_relative 'actions'
 require_relative 'environment'
 require_relative 'host/environment'
+require_relative 'host/file_system'
 require_relative 'part'
 
 
@@ -46,7 +47,11 @@ class Screenplay
     end
 
     def env
-      @env ||= Screenplay::Host::Environment.new(ssh, @hostname)
+      @env ||= Screenplay::Host::Environment.new(@hostname)
+    end
+
+    def fs
+      @fs ||= Screenplay::Host::FileSystem.new(@hostname)
     end
 
     def action!
