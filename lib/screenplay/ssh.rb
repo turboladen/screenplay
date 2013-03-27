@@ -95,14 +95,15 @@ class Screenplay
       new_options = @options.merge(ssh_options)
 
       result = begin
-        output = @ssh.scp_ul(@hostname, source, destination, new_options, &ssh_block)
+        #output = @ssh.scp_ul(@hostname, source, destination, new_options, &ssh_block)
+        output = @ssh.scp_ul(@hostname, source, destination, new_options)
         Screenplay::ActionResult.new(output)
       rescue Net::SSH::Simple::Error => ex
-        log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
+        log "Net::SSH::Simple::Error: #{ex}"
         Screenplay::ActionResult.new(ex, :failed)
       end
 
-      log "SCP upload result: #{result}"
+      log "SCP upload result: #{result.inspect}"
       result
     end
 

@@ -49,13 +49,13 @@ class Screenplay
 
       def perform(hostname)
         result = Screenplay::Environment.hosts[hostname].ssh.run(@command)
-        return result if result.error?
+        return result if result.exception?
 
-        result.status = case result.ssh_output.exit_code
+        result.status = case result.exit_code
         when 0
           :updated
         else
-          if result.ssh_output.stdout.match(/File exists/)
+          if result.stdout.match(/File exists/)
             :no_change
           else
             handle_on_fail
