@@ -75,7 +75,7 @@ class Screenplay
       result = action.perform(@hostname)
       raise 'Action result status was nil' if result.status.nil?
 
-      if result.status == :failed
+      if result.failed?
         if action.fail_block
           actions_before = @actions.size
           action.fail_block.call
@@ -89,9 +89,9 @@ class Screenplay
         else
           plan_failure(result)
         end
-      elsif result.status == :no_change
+      elsif result.no_change?
         puts "Screenplay finished [NO CHANGE]: '#{action.command}'".yellow
-      elsif result.status == :updated
+      elsif result.updated?
         puts "Screenplay finished [UPDATED]: '#{action.command}'".green
       else
         puts "WTF? status: #{result.status}".red

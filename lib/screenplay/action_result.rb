@@ -77,6 +77,18 @@ class Screenplay
       !!@exception
     end
 
+    def failed?
+      @status == :failed
+    end
+
+    def no_change?
+      @status == :no_change
+    end
+
+    def updated?
+      @status == :updated
+    end
+
     # @return [Hash] All attributes as a Hash.
     def to_hash
       instance_variables.inject({}) do |result, ivar|
