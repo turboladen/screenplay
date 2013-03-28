@@ -1,5 +1,6 @@
 require 'etc'
 require 'net/ssh/simple'
+require 'highline/import'
 require_relative 'logger'
 require_relative 'action_result'
 
@@ -70,12 +71,25 @@ class Screenplay
     # @return [Screenplay::ActionResult]
     def run(command, **ssh_options)
       new_options = @options.merge(ssh_options)
+      @retried = false
 
       result = begin
         output = @ssh.ssh(@hostname, command, new_options, &ssh_block)
         Screenplay::ActionResult.new(output)
       rescue Net::SSH::Simple::Error => ex
-        log "Net::SSH::Simple::Error raised.  Using options: #{@options}"
+        log "Net::SSH::Simple::Error: #{ex}"
+
+        if ex.wrapped.class == Net::SSH::AuthenticationFailed
+          if @retried
+            puts 'Authentication failed.'.red
+          else
+            @retried = true
+            password = ask('Enter your password:  ') { |q| q.echo = false }
+            new_options.merge! password: password
+            retry
+          end
+        end
+
         Screenplay::ActionResult.new(ex, :failed)
       end
 
