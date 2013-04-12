@@ -1,10 +1,8 @@
 require 'colorize'
+require 'rosh/host'
 require_relative 'logger'
-require_relative 'ssh'
 require_relative 'actions'
 require_relative 'environment'
-require_relative 'host/environment'
-require_relative 'host/file_system'
 require_relative 'part'
 
 
@@ -30,49 +28,32 @@ class Screenplay
     include LogSwitch::Mixin
 
     attr_reader :hostname
-    attr_reader :name
 
-    def initialize(hostname, name='', **ssh_options)
+    def initialize(hostname, **ssh_options)
       @hostname = hostname
-      @name = name
       @actions = []
       @ssh_options = ssh_options
 
       log "Initialized for host: #{@hostname}"
-      Screenplay::Environment.hosts[hostname] = self
-    end
-
-    def ssh
-      @ssh ||= Screenplay::SSH.new(@hostname, @ssh_options)
-    end
-
-    def env
-      @env ||= Screenplay::Host::Environment.new(@hostname)
-    end
-
-    def fs
-      @fs ||= Screenplay::Host::FileSystem.new(@hostname)
+      Screenplay::Environment.hosts[hostname] = ::Rosh::Host.new(@hostname, @ssh_options)
     end
 
     def action!
       log 'Starting action...'
-      log "...hostname: #{@hostname}"
-      log "...ssh options: #{@ssh_options}"
-      log "...actions: #{@actions}"
       puts "Executing action on host '#{@hostname}'".blue
 
       start_time = Time.now
 
-      @actions.each do |cmd|
-        run_action(cmd)
+      Screenplay::Environment.hosts[@hostname].shell.exec_stored do |result|
+
       end
 
       puts "Screenplay finished performing\nTotal Duration: #{Time.now - start_time}".green
     end
 
     def run_action(action)
-      puts "Running #{action.class} command: '#{action.command}'".blue
-      result = action.perform(@hostname)
+      #puts "Running #{action.class} command: '#{action.command}'".blue
+      result = action.build_result(@hostname)
       raise 'Action result status was nil' if result.status.nil?
 
       if result.failed?
