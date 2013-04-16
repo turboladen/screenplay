@@ -2,7 +2,10 @@
 
 # Trap interrupts to quit cleanly. See
 # https://twitter.com/mitchellh/status/283014103189053442
-Signal.trap('INT') { exit 1 }
+old_sig = Signal.trap('INT') do
+  old_sig.call
+  exit 1
+end
 
 require_relative '../lib/screenplay'
 
