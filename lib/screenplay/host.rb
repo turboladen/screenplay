@@ -1,5 +1,8 @@
+require 'forwardable'
+
 require 'colorize'
 require 'rosh/host'
+
 require_relative 'logger'
 require_relative 'actions'
 require_relative 'environment'
@@ -24,20 +27,24 @@ class Screenplay
   #   host.action!
   #
   class Host
+    extend Forwardable
+
     include Screenplay::Actions
     include LogSwitch::Mixin
 
     attr_reader :hostname
 
-    def initialize(hostname, **ssh_options)
-      @hostname = hostname
-      @actions = []
-      @ssh_options = ssh_options
-
-      log "Initialized for host: #{@hostname}"
-      Screenplay::Environment.hosts[hostname] = ::Rosh::Host.new(@hostname, @ssh_options)
+    # @param [Rosh::Host] host
+    def initialize(host)
+      @host = host
+      log "Initialized for host: #{@host.hostname}"
     end
 
+    def_delegators :@host, :hostname, :user, :shell, :operating_system,
+      :kernel_version, :architecture, :distribution, :distribution_version,
+      :remote_shell, :services, :packages
+
+=begin
     def action!
       log 'Starting action...'
       puts "Executing action on host '#{@hostname}'".blue
@@ -117,5 +124,6 @@ class Screenplay
 
       abort(error.red)
     end
+=end
   end
 end
