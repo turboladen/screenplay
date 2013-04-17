@@ -3,10 +3,28 @@ require_relative 'screenplay/host'
 
 
 class Screenplay
-  def self.sketch(hosts, stop_on_fail= true, on_fail= nil, &block)
+  def self.sketch(hosts, stop_on_fail: true, on_fail: nil,
+    report_file: nil, &block)
     sketcher = new(hosts, stop_on_fail, on_fail)
 
+    starting_dir = Dir.pwd
     sketcher.sketch(&block)
+    Dir.chdir(starting_dir)
+
+    if report_file
+      require 'yaml'
+
+      File.open(File.expand_path(report_file), 'w') do |f|
+        sketcher.hosts.each do |host|
+          YAML.dump(host.shell.history, f)
+        end
+      end
+    else
+      sketcher.hosts.each do |host|
+        puts "History for #{host.hostname}"
+        p host.shell.history
+      end
+    end
   end
 
   attr_reader :hosts
@@ -34,7 +52,6 @@ class Screenplay
       end
 
       puts "Stopped execution because of: #{failure}"
-      p host.shell.history.last
     end
   end
 end
