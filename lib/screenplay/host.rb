@@ -48,6 +48,9 @@ class Screenplay
       :kernel_version, :architecture, :distribution, :distribution_version,
       :remote_shell, :services, :packages
 
+    def play_part(part_class, **options)
+      part_class.play(self, **options)
+    end
 
     def directory(path,
       state: :exists,
