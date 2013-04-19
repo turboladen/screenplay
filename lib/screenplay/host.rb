@@ -4,6 +4,7 @@ require 'colorize'
 require 'rosh/host'
 
 require_relative 'logger'
+require_relative 'host_changes'
 require_relative 'actions'
 require_relative 'environment'
 require_relative 'part'
@@ -32,18 +33,61 @@ class Screenplay
     include Screenplay::Actions
     include LogSwitch::Mixin
 
-    attr_reader :hostname
+    attr_reader :host_changes
 
     # @param [Rosh::Host] host
     def initialize(host)
       @host = host
       log "Initialized for host: #{@host.hostname}"
+      @results = []
+      @host_changes = HostChanges.new
+      @host.packages.add_observer(@host_changes)
     end
 
     def_delegators :@host, :hostname, :user, :shell, :operating_system,
       :kernel_version, :architecture, :distribution, :distribution_version,
       :remote_shell, :services, :packages
 
+
+    def directory(path,
+      state: :exists,
+      owner: nil,
+      group: nil,
+      mode: nil,
+      on_fail: nil)
+
+      dir = @host.fs.directory(path)
+      dir.add_observer(@host_changes)
+
+      case state
+      when :absent
+        dir.remove if dir.exists?
+      when :exists
+        dir.create unless dir.exists?
+
+        puts "owner: #{dir.owner}"
+        if owner && dir.owner != owner
+          dir.owner = owner
+        end
+
+        puts "group: #{dir.group}"
+        if group && dir.group != group
+          dir.group = group
+        end
+
+        puts "mode: #{dir.mode}"
+        if mode && dir.mode != mode
+          dir.mode = mode
+        end
+      else
+        raise "Unknown state: #{state}"
+      end
+
+      @results << {
+        actor: :directory,
+        arguments: { state: state, owner: owner, mode: mode }
+      }
+    end
 =begin
     def action!
       log 'Starting action...'
