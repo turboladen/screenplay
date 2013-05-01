@@ -4,9 +4,8 @@ class Screenplay
       @changes = []
     end
 
-    def update(*args)
-      puts "update called with #{args}"
-      @changes << args
+    def update(object, attribute: attribute, old: old, new: new)
+      @changes << { object: object, attribute: attribute, old: old, new: new }
     end
   end
 end
