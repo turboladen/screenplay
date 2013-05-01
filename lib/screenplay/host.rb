@@ -91,6 +91,51 @@ class Screenplay
         arguments: { state: state, owner: owner, mode: mode }
       }
     end
+
+    def file(path,
+      state: :exists,
+      owner: nil,
+      group: nil,
+      mode: nil,
+      contents: nil
+    )
+
+    require_relative 'actors/file'
+    file = Screenplay::Actors::File.new(@host.fs.file(path), @host_changes)
+
+    case state
+    when :absent
+      file.remove
+    when :exists
+      if contents
+        file.exists_with_content(contents)
+      else
+        file.exists
+      end
+
+      log "owner: #{file.owner}"
+      if owner && file.owner != owner
+        file.owner = owner
+      end
+
+      log "group: #{file.group}"
+      if group && file.group != group
+        file.group = group
+      end
+
+      log "mode: #{file.mode}"
+      if mode && file.mode != mode
+        file.mode = mode
+      end
+    else
+      raise "Unknown state: #{state}"
+    end
+
+    @results << {
+      actor: :directory,
+      arguments: { state: state, owner: owner, mode: mode }
+    }
+    end
 =begin
     def action!
       log 'Starting action...'
