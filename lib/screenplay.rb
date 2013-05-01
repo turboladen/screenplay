@@ -34,15 +34,13 @@ class Screenplay
     @hosts = []
     @on_fail_block = on_fail
 
-    rosh = Rosh.new
-
     hosts.each do |hostname, options|
       host_alias = options.delete(:alias)
 
-      rosh.add_host(hostname, host_alias: host_alias, **options)
+      Rosh.add_host(hostname, host_alias: host_alias, **options)
     end
 
-    rosh.hosts.each do |hostname, host|
+    Rosh.hosts.each do |hostname, host|
       puts "Adding host: #{hostname}"
       @hosts << Screenplay::Host.new(host, &on_fail)
     end
