@@ -66,7 +66,7 @@ class Screenplay
       when :absent
         dir.remove if dir.exists?
       when :exists
-        dir.create unless dir.exists?
+        dir.save unless dir.exists?
 
         puts "owner: #{dir.owner}"
         if owner && dir.owner != owner
