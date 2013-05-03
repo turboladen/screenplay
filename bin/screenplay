@@ -8,17 +8,17 @@ old_sig = Signal.trap('INT') do
 end
 
 require_relative '../lib/screenplay'
+require 'gli'
 
-file = 'Dramafile'
-cli_stage = ARGV.first.to_s
-load file
-actors = []
+include GLI::App
 
-Screenplay::Environment.stages[cli_stage].each do |stage|
-  klass = Screenplay.const_get(stage.capitalize)
-  actors << klass.new.build_commands
+program_desc 'sdjsdkf sdflkj'
+
+
+command :rewind do |cmd|
+  cmd.action do |_, _, change_files|
+    Screenplay.rewind(change_files)
+  end
 end
 
-actors.each { |actor| actor.action! }
-
-
+exit run(ARGV)
