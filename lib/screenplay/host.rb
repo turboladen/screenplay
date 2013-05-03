@@ -48,8 +48,15 @@ class Screenplay
       :kernel_version, :architecture, :distribution, :distribution_version,
       :remote_shell, :services, :packages
 
-    def play_part(part_class, **options)
-      part_class.play(self, **options)
+    # Allows defining a {Screenplay::Part} and "playing" (or running) that Part
+    # in the context of this Host.
+    #
+    # @param [Class] part_class The class that defines #play that you wish to
+    #   run.
+    # @param [Hash] params Any named params to pass on to the #play method of
+    #   the Part.
+    def play_part(part_class, **params)
+      part_class.play(self, **params)
     end
 
     def directory(path,
