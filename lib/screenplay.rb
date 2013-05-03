@@ -1,54 +1,31 @@
-require 'rosh'
-require_relative 'screenplay/host'
-require_relative 'screenplay/part'
+require 'yaml'
+require_relative 'screenplay/sketch'
 
 
 class Screenplay
-  def self.sketch(hosts, on_fail: nil,
-    report_file: nil, &block)
-    sketcher = new(hosts, on_fail)
 
-    starting_dir = Dir.pwd
-    sketcher.sketch(&block)
-    Dir.chdir(starting_dir)
-
-    if report_file
-      require 'yaml'
-
-      File.open(File.expand_path(report_file), 'w') do |f|
-        sketcher.hosts.each do |host|
-          YAML.dump(host.shell.history, f)
-        end
-      end
-    else
-      sketcher.hosts.each do |host|
-        puts "History for #{host.hostname}"
-        p host.shell.history
-      end
-    end
+  # Defines a "sketch" to be executed against all +hosts+.  A sketch is a method
+  # provided by Screenplay for describing a set of hosts, where the focus for
+  # describing the hosts is via specifying direct objects, their state, and
+  # additional commands.
+  #
+  # @param [Hash{ String => Hash}] hosts Keys are hostnames/IP addresses and
+  #   values are options to pass on the Rosh::Host.
+  #
+  # @param on_fail
+  #
+  # @param [String] cmd_history_file Path to output the list of commands that
+  #   were executed throughout the sketch.
+  def self.sketch(hosts, on_fail: nil, cmd_history_file: nil, &block)
+    sketcher = Sketch.new(hosts, on_fail, cmd_history_file)
+    sketcher.action!(&block)
   end
 
-  attr_reader :hosts
-
-  def initialize(hosts, on_fail)
-    @hosts = []
-    @on_fail_block = on_fail
-
-    hosts.each do |hostname, options|
-      host_alias = options.delete(:alias)
-
-      Rosh.add_host(hostname, host_alias: host_alias, **options)
-    end
-
-    Rosh.hosts.each do |hostname, host|
-      puts "Adding host: #{hostname}"
-      @hosts << Screenplay::Host.new(host, &on_fail)
-    end
-  end
-
-  def sketch
-    @hosts.each do |host|
-      yield host
+  # @param [Array] change_files List of files to use for rewinding.
+  def self.rewind(change_files)
+    change_files.each do |file|
+      changes = YAML.load_file(file)
+      changes.rewind
     end
   end
 end
