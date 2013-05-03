@@ -8,6 +8,8 @@ require_relative 'host_changes'
 require_relative 'actions'
 require_relative 'environment'
 require_relative 'part'
+require_relative 'actors/file'
+require_relative 'actors/directory'
 
 
 class Screenplay
@@ -59,46 +61,21 @@ class Screenplay
       part_class.play(self, **params)
     end
 
+    # @todo Remove checks on attribute equality; Rosh does this internally.
     def directory(path,
       state: :exists,
       owner: nil,
       group: nil,
-      mode: nil,
-      on_fail: nil)
+      mode: nil
+      )
+      dir = Screenplay::Actors::Directory.new(@host.fs.directory(path),
+        @host_changes)
+      result = dir.act(state: state, owner: owner, group: group, mode: mode)
 
-      dir = @host.fs.directory(path)
-      dir.add_observer(@host_changes)
-
-      case state
-      when :absent
-        dir.remove if dir.exists?
-      when :exists
-        dir.save unless dir.exists?
-
-        puts "owner: #{dir.owner}"
-        if owner && dir.owner != owner
-          dir.owner = owner
-        end
-
-        puts "group: #{dir.group}"
-        if group && dir.group != group
-          dir.group = group
-        end
-
-        puts "mode: #{dir.mode}"
-        if mode && dir.mode != mode
-          dir.mode = mode
-        end
-      else
-        raise "Unknown state: #{state}"
-      end
-
-      @results << {
-        actor: :directory,
-        arguments: { state: state, owner: owner, mode: mode }
-      }
+      @results << result
     end
 
+    # @todo Remove checks on attribute equality; Rosh does this internally.
     def file(path,
       state: :exists,
       owner: nil,
@@ -106,43 +83,13 @@ class Screenplay
       mode: nil,
       contents: nil
     )
+      file = Screenplay::Actors::File.new(@host.fs.file(path), @host_changes)
+      result = file.act(state: state, owner: owner, group: group, mode: mode,
+        contents: contents)
 
-    require_relative 'actors/file'
-    file = Screenplay::Actors::File.new(@host.fs.file(path), @host_changes)
-
-    case state
-    when :absent
-      file.remove
-    when :exists
-      if contents
-        file.exists_with_content(contents)
-      else
-        file.exists
-      end
-
-      log "owner: #{file.owner}"
-      if owner && file.owner != owner
-        file.owner = owner
-      end
-
-      log "group: #{file.group}"
-      if group && file.group != group
-        file.group = group
-      end
-
-      log "mode: #{file.mode}"
-      if mode && file.mode != mode
-        file.mode = mode
-      end
-    else
-      raise "Unknown state: #{state}"
+      @results << result
     end
 
-    @results << {
-      actor: :directory,
-      arguments: { state: state, owner: owner, mode: mode }
-    }
-    end
 =begin
     def action!
       log 'Starting action...'
