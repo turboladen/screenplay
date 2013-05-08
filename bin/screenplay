@@ -21,4 +21,17 @@ command :rewind do |cmd|
   end
 end
 
+command :sketch do |cmd|
+  cmd.action do |_, _, args|
+    sketch_file = if args.empty? && File.exists?(File.expand_path 'config/screenplay.rb')
+      File.expand_path('config/screenplay.rb')
+    else
+      args.first
+    end
+
+    sketch_content = File.read(sketch_file)
+    eval(sketch_content)
+  end
+end
+
 exit run(ARGV)
