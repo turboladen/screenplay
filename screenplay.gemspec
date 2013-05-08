@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
     %w(.gemtest Gemfile screenplay.gemspec Rakefile)
   s.test_files = Dir.glob('{spec}/**/*')
   s.require_paths = %w[lib]
+  s.executables = %w[screenplay]
 
   %w[
     colorize
