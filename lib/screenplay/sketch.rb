@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'yaml'
 require 'rosh'
 require_relative 'host'
@@ -6,6 +7,8 @@ require_relative 'part'
 
 class Screenplay
   class Sketch
+    OUTPUT_DIR = 'screenplay-shows'
+
     attr_reader :hosts
 
     def initialize(hosts, on_fail, cmd_history_file=nil)
@@ -32,7 +35,8 @@ class Screenplay
         yield host
 
         time = Time.now.strftime('%Y%m%d%H%M%S')
-        file = "#{host.hostname}-#{time}_changes.yml"
+        file = "#{OUTPUT_DIR}/#{host.hostname}-#{time}_changes.yml"
+        FileUtils.mkdir(OUTPUT_DIR) unless Dir.exists?(OUTPUT_DIR)
 
         File.open(file, 'w') do |f|
           YAML.dump(host.host_changes, f)
@@ -48,7 +52,7 @@ class Screenplay
       host_history = []
 
       File.open(File.expand_path(@cmd_history_file), 'w') do |f|
-        sketcher.hosts.each do |host|
+        @hosts.each do |host|
           host_history << {
             hostname: host.hostname,
             history: host.shell.history
