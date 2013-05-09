@@ -10,6 +10,7 @@ require_relative 'environment'
 require_relative 'part'
 require_relative 'actors/file'
 require_relative 'actors/directory'
+require_relative 'actors/shell'
 
 
 class Screenplay
@@ -88,6 +89,10 @@ class Screenplay
         contents: contents)
 
       @results << result
+    end
+
+    def shell
+      @shell ||= Actors::Shell.new(@host.shell)
     end
 
 =begin
