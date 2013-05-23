@@ -15,6 +15,12 @@ include GLI::App
 program_desc 'sdjsdkf sdflkj'
 
 
+desc 'Rewind changes from a sketch'
+long_desc <<-DESC
+Changes from screenplay can be undone using this command and a set of changes
+files.  By default, these changes files are saved as YAML to the
+"screenplay-shows/" directory (relative to where screenplay is run from).
+DESC
 command :rewind do |cmd|
   cmd.action do |_, _, change_files|
     Screenplay.rewind(change_files)
