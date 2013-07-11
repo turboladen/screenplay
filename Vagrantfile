@@ -7,10 +7,10 @@ Vagrant::Config.run do |config|
 
   end
 
-  config.vm.define :centos_55_64 do |os|
-    os.vm.host_name = 'centos-55-64'
-    os.vm.box = 'centos-55-64'
-    os.vm.box_url = 'http://dl.dropbox.com/u/15307300/vagrant-0.7-centos-64-base.box'
+  config.vm.define :centos_57_64 do |os|
+    os.vm.host_name = 'centos-57-64'
+    os.vm.box = 'centos-57-64'
+    os.vm.box_url = 'http://www.lyricalsoftware.com/downloads/centos-5.7-x86_64.box'
     os.vm.network :hostonly, '192.168.33.100'
     # config.vm.provision :screenplay, &provision
   end

@@ -1,13 +1,12 @@
 GIT
   remote: git@github.com:turboladen/rosh.git
-  revision: 176ce643242f2cfafc3d5ff8af1f0bf17169c012
+  revision: 2aa5b7423f3cbf2d92900dc57e9d1c01a8814f90
   specs:
     rosh (0.1.0)
       awesome_print
       colorize
       highline
       log_switch
-      net-ssh-simple
       plist
       sys-proctable
 
@@ -16,104 +15,44 @@ PATH
   specs:
     screenplay (0.1.0)
       colorize
-      highline
+      gli
       log_switch
-      net-ssh-simple
 
 GEM
   remote: https://rubygems.org/
   specs:
-    akami (1.2.0)
-      gyoku (>= 0.4.0)
-      nokogiri (>= 1.4.0)
-    archive-tar-minitar (0.5.2)
     awesome_print (1.1.0)
-    blockenspiel (0.4.5)
-    builder (3.2.0)
-    childprocess (0.3.9)
-      ffi (~> 1.0, >= 1.0.11)
     colorize (0.5.8)
-    diff-lcs (1.2.3)
-    erubis (2.7.0)
-    ffi (1.7.0)
-    gssapi (1.0.3)
-      ffi (>= 1.0.1)
-    gyoku (1.0.0)
-      builder (>= 2.1.2)
-    hashie (2.0.3)
-    highline (1.6.16)
-    httpclient (2.2.0.2)
-    httpi (0.9.7)
-      rack
-    i18n (0.6.4)
-    json (1.7.7)
-    little-plugger (1.1.3)
-    log4r (1.1.10)
+    diff-lcs (1.2.4)
+    gli (2.7.0)
+    highline (1.6.19)
     log_switch (0.4.0)
-    logging (1.6.2)
-      little-plugger (>= 1.1.3)
-    multi_json (1.7.2)
-    net-scp (1.0.4)
-      net-ssh (>= 1.99.1)
-    net-ssh (2.2.2)
-    net-ssh-simple (1.5.8)
-      blockenspiel (~> 0.4.3)
-      hashie (>= 1.1.0)
-      net-scp (~> 1.0.4)
-      net-ssh (~> 2.2.1)
-    nokogiri (1.5.9)
-    nori (1.1.5)
+    multi_json (1.7.7)
     plist (3.1.0)
-    rack (1.5.2)
-    rake (10.0.4)
-    redcarpet (2.2.2)
-    rspec (2.13.0)
-      rspec-core (~> 2.13.0)
-      rspec-expectations (~> 2.13.0)
-      rspec-mocks (~> 2.13.0)
-    rspec-core (2.13.1)
-    rspec-expectations (2.13.0)
+    rake (10.1.0)
+    redcarpet (3.0.0)
+    rspec (2.14.1)
+      rspec-core (~> 2.14.0)
+      rspec-expectations (~> 2.14.0)
+      rspec-mocks (~> 2.14.0)
+    rspec-core (2.14.2)
+    rspec-expectations (2.14.0)
       diff-lcs (>= 1.1.3, < 2.0)
-    rspec-mocks (2.13.1)
-    rubyntlm (0.1.1)
-    savon (0.9.5)
-      akami (~> 1.0)
-      builder (>= 2.1.2)
-      gyoku (>= 0.4.0)
-      httpi (~> 0.9)
-      nokogiri (>= 1.4.0)
-      nori (~> 1.0)
-      wasabi (~> 1.0)
+    rspec-mocks (2.14.1)
     simplecov (0.7.1)
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
     sys-proctable (0.9.3)
-    uuidtools (2.1.3)
-    vagrant (1.0.7)
-      archive-tar-minitar (= 0.5.2)
-      childprocess (~> 0.3.1)
-      erubis (~> 2.7.0)
-      i18n (~> 0.6.0)
-      json (>= 1.5.1, < 1.8.0)
-      log4r (~> 1.1.9)
-      net-scp (~> 1.0.4)
-      net-ssh (~> 2.2.2)
-    vagrant-windows (0.1.2)
-      highline
-      vagrant (~> 1.0.3)
-      winrm (~> 1.1.1)
-    wasabi (1.0.0)
-      nokogiri (>= 1.4.0)
-    winrm (1.1.2)
-      gssapi (~> 1.0.0)
-      httpclient (~> 2.2.0.2)
-      logging (~> 1.6.1)
-      nokogiri (~> 1.5.0)
-      rubyntlm (~> 0.1.1)
-      savon (= 0.9.5)
-      uuidtools (~> 2.1.2)
-    yard (0.8.5.2)
+    tailor (1.2.1)
+      log_switch (>= 0.3.0)
+      term-ansicolor (>= 1.0.5)
+      text-table (>= 1.2.2)
+    term-ansicolor (1.2.2)
+      tins (~> 0.8)
+    text-table (1.2.3)
+    tins (0.8.2)
+    yard (0.8.6.2)
 
 PLATFORMS
   ruby
@@ -126,6 +65,5 @@ DEPENDENCIES
   rspec (>= 2.12.0)
   screenplay!
   simplecov
-  vagrant (~> 1.0)
-  vagrant-windows (~> 0.1.2)
+  tailor
   yard (>= 0.7.2)

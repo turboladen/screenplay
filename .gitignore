@@ -4,6 +4,7 @@
 .config
 .idea/
 .vagrant/
+.vagrant.*
 
 atlassian-ide-plugin.xml
 coverage
