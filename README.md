@@ -8,13 +8,37 @@ DESCRIPTION:
 
 Simple Configuration Management that _really_ lets you use Ruby.
 
+Your app is not just your code--it's all of its dependencies as well--so you
+should be able to manage those dependencies as part of your app.  When you
+deploy, you should (at least have the option to) make sure your host(s) are in
+the state that you want them to be in: a nice, happy place for all of your
+codez.
+
 FEATURES/PROBLEMS:
 ------------------
 
-* FIX (list of features or problems)
+* Manage local or remote:
+    * files (static or from a template), directories, links
+    * users & groups
+    * packages:
+        * apt & deb
+        * yum & rpm
+        * brew
+    * source code repositories:
+        * git
+        * subversion
+* Run scripts/commands
+* "sketches" for reusing things you do regularly
+
 
 SYNOPSIS:
 ---------
+
+Screenplay uses [ROSH](https://github.com/turboladen/rosh) (Ruby Object SHell)
+for running commands both locally or remotely, thus if you can do something with
+that, there's a good chance you can do it with screenplay.
+
+### Why another configuration management tool? ###
 
 [Puppet](https://puppetlabs.com), [Chef](http://www.opscode.com/chef/),
 [Ansible](http://ansible.cc) and others are all super cool, but they never quite
@@ -25,44 +49,54 @@ Gripes with those tools:
 * I don't want to have to figure out how to install the tool and it's
   dependencies. RubyGems and Bundler are great for managing these sorts of
   things--why not just use those?
-  * Others:
-    * Ansible: 0
-    * Chef: -1
-    * Puppet: -1
-  * Screenplay:
-    * Just `gem install screenplay` on the box you want to run from.
+    * Others:
+        * Ansible: 0
+        * Chef: -1
+        * Puppet: -1
+    * Screenplay:
+        * Just `gem install screenplay` on the box you want to run from.
 * I don't want to have to set anything up on the boxes I manage.  I should be
-  able to do anything to that box using standard tools already on the box (like
+  able to do anything to that box using standard tools already on the box (aka
   SSH).
-  * Others:
-    * Ansible: +1
-    * Chef: -1
-    * Puppet: -1
-  * Screenplay:
-    * Does everything over SSH.
+    * Others:
+        * Ansible: +1
+        * Chef: -1
+        * Puppet: -1
+    * Screenplay:
+        * Does everything over SSH.
 * I want to install the tool from the box I'm going to run stuff from and that's
   it.  Reading tons of docs and setting up different boxes always seemed
   overbearing for my purposes.
-  * Others:
-    * Ansible: +1
-    * Chef: +1 (chef-solo)
-    * Puppet: -1
-  * Screenplay:
-    * Just `gem install screenplay` on the box you want to run from.
-    * "Scenes" (Screenplay's modules/manifests, cookbooks/recipes, playbooks) are
-       pulled in from a local or remote path.  How you get the scenes there is
-       up to you (use git, svn, ftp, scp, whatever).
+    * Others:
+        * Ansible: +1
+        * Chef: +1 (chef-solo)
+        * Puppet: -1
+    * Screenplay:
+        * Just `gem install screenplay` on the box you want to run from.
+        * "Scenes" (Screenplay's modules/manifests, cookbooks/recipes, playbooks) are
+          pulled in from a local or remote path.  How you get the scenes there is
+          up to you (use git, svn, ftp, scp, whatever).
 * I want to use a programming language for defining what it is I want to do.
   GPLs exist for solving problems--why make us learn another language just to
   solve these types of problems?  And using a markup language for defining this
   stuff is _super_ handy--until you want to use any sort of logic, and then it
   just feels contrived.
-  * Others:
-    * Ansible: -1
-    * Chef: +1
-    * Puppet: -1
-  * Screenplay:
-    * Just Ruby with a little DSL niceness (but not too much).
+    * Others:
+        * Ansible: -1
+        * Chef: +1
+        * Puppet: -1
+    * Screenplay:
+        * Just Ruby with a little DSL niceness (but not too much).
+
+Other important things that the other tools also solve:
+
+* My app's configuration should live with my app.  Everyone working on the app
+  should have access to updating the app's dependencies as the app needs.
+* My app's configuration should be able to be applied to any host--local or
+  remote, virtual or real--without having to specify any fancy info.
+* I don't want to have to rely on a "server" implementation to pull
+  scripts/recipes/whatever from--there are good tools that already solve this
+  problem.
 
 
 ### Basic Actions ###
@@ -133,8 +167,8 @@ REQUIREMENTS:
 * Ruby 2.0.0
 * RubyGems
   * colorize
-  * highline
-  * net-ssh-simple
+  * gli
+  * log_switch
 
 INSTALL:
 --------
