@@ -99,37 +99,128 @@ Other important things that the other tools also solve:
   problem.
 
 
-### Basic Actions ###
+### Sketches ###
 
-Actions available:
-* apt
-* brew
-* file
-* script
-* shell
-* subversion
+A Sketch is a set of descriptions to be applied to a host or set of hosts.
+Sketches are idempotent: if the host(s) are already in the described state, then
+screenplay does nothing to the host to change it; otherwise, it will run
+commands on the host(s) to make it how you've described it.
 
-    %w[git-core curl openssl].each do |package|
-      Screenplay.apt pkg: package, state: :installed, update_cache: true
+Sketch actions are simply methods called on the Host object that take a block
+of setting attributes on the object you want to describe.  For example,
+something simliar to a simple Capistrano deploy:
+
+    # Declare some attributes as variables so we can reuse them.
+    hosts = {
+      '10.0.0.1' => {
+        user: 'george',
+        keys: [Dir.home + '/.ssh/id_rsa']
+      }
+    }
+
+    app_root = '/var/www/my_app'
+    app_owner = 'app'
+
+    perms_block = lambda do |dir|
+      dir.exists = true
+      dir.owner = app_owner
+      dir.group = app_owner
+      dir.mode = '664'
     end
 
-### Scenes ###
+    git_repo = 'https://github.com/turboladen/my_app'
 
-(Not yet implemented, but should look something like this...)
+    current_dir = "#{app_root}/current"
+    releases_dir = "#{app_root}/releases"
+    release_dir = "#{app_root}/releases/#{Time.now.strftime('%Y%M%d%m%S')}"
+
+    shared_dir          = "#{app_root}/shared"
+    shared_bundle_dir   = "#{shared_dir}/bundle"
+    shared_log_dir      = "#{shared_dir}/log"
+    shared_pid_dir      = "#{shared_dir}/pid"
+
+    # Start describing what you want on the hosts.
+    Screenplay.sketch(hosts) do |host|
+      # Make sure the directory structure is created.
+      [
+        app_root,
+        releases_dir, release_dir,
+        shared_dir, shared_bundle_dir, shared_log_dir, shared_pid_dir
+        ].each do |dir|
+        host.directory(dir, &perms_block)
+      end
+
+      # Pull down the app's source.
+      host.git(git_repo) do |repo|
+        repo.destination = release_dir
+        repo.depth = 1
+        repo.branch = 'new_features'
+        repo.commit_hash = :latest
+      end
+
+      # Link release directories with shared directories.
+      public_path = "#{release_dir}/public"
+
+      %w[log bundle].each do |dir|
+        host.link("#{public_path}/#{dir}") do |link|
+          link.target = "#{release_dir}/#{dir}"
+          link.force = true
+        end
+      end
+
+      host.link(release_dir, target: current_dir)   # (Non-block form!)
+
+      # Change the working path to be the release path.
+      host.cd(release_dir)
+
+      # Install bundler deps.
+      host.bundler do |bundle|
+        bundle.executable = "#{release_dir}/bin/bundler"
+        bundle.gemfile = "#{release_dir}/Gemfile"
+        bundle.path = "#{shared_dir}/bundle"
+        bundle.options = %w[--deployment --quiet]
+        bundle.without = %w[development test staging]
+      end
+
+      host.rake('deploy:assets:precompile') do |rake|
+        rake.executable = "#{release_dir}/bin/rake"
+        rake.with_environment_variables['RAILS_ENV'] = 'production'
+        rake.with_environment_variables['RAILS_GROUPS'] = 'assets'
+      end
+
+      host.rake('db:migrate') do |rake|
+        rake.executable = "#{release_dir}/bin/rake"
+        rake.with_environment_variables['RAILS_ENV'] = 'production'
+      end
+
+      # Restart Passenger.
+      host.exec('touch tmp/restart.txt')
+    end
+
+
+### Parts ###
+
+Screenplay Parts are reusable chunks of described environment, for things that
+we all do regularly.  For example, one for installing rbenv:
 
     # rbenv.rb
-    class RbEnv < Screenplay::Scene
-      def act
-        if remote_os.osx?
-          brew pkg: 'git', state: :installed, update: true
-          brew pkg: 'rbenv', state: :installed
-          brew pkg: 'ruby-build', state: :installed
+    class RbEnv < Screenplay::Part
+      def play(user: user, binary: '/usr/bin/env rbenv', ruby_version: nil, remove: false)
+        if remove
+          remove_rvm(user)
           return
         end
 
-        profile_file =  if remote_os.ubuntu?
+        if host.env.operating_system == :darwin
+          host.brew formula: 'git', state: :installed, update: true
+          host.brew formula: 'rbenv', state: :installed
+          host.brew formula: 'ruby-build', state: :installed
+          return
+        end
+
+        profile_file = if host.env.distribution == :ubuntu
           '~/.profile'
-        elsif remote_shell.zsh?
+        elsif host.env.shell == :zsh
           '~/.zshrc'
         else
           '~/.bash_profile'
@@ -138,28 +229,61 @@ Actions available:
         rbenv_home = "/home/#{user}/.rbenv"
 
         # git
-        apt pkg: 'git', state: :installed, update_cache: true
+        case host.env.distribution
+        when :ubuntu
+          host.apt package: 'git', update_cache: true, sudo: true
+        when :centos
+          host.yum package: 'git', update_cache: true, sudo: true
+        end
 
         # rbenv
-        git repo: 'git://github.com/sstephenson/rbenv.git', dest: rbenv_home
-        shell %[echo 'export PATH="#{rbenv_home}/bin:$PATH"' >> #{profile_file}]
-        shell %[echo 'eval "$(rbenv init -)"' >> #{profile_file}]
+        host.git repository: 'git://github.com/sstephenson/rbenv.git',
+          destination: rbenv_home
+        host.shell command: %[echo 'export PATH="#{rbenv_home}/bin:$PATH"' >> #{profile_file}]
+        host.shell command: %[echo 'eval "$(rbenv init -)"' >> #{profile_file}]
 
         # ruby-build
-        git repo: 'git://github.com/sstephenson/ruby-build.git',
-          dest: "#{rbenv_home}/plugins/ruby-build"
+        host.git repository: 'git://github.com/sstephenson/ruby-build.git',
+          destination: "#{rbenv_home}/plugins/ruby-build"
+
+        # Install ruby
+        if ruby_version
+          host.shell command: %[#{binary} versions | grep #{ruby_version}], on_fail: -> do
+            host.shell command: %[#{binary} install #{ruby_version}]
+          end
+        end
+      end
+
+      def remove_rvm(user)
+        case host.env.operating_system
+        when :darwin
+          host.brew formula: 'rbenv', state: :removed
+          host.brew formula: 'ruby-build', state: :removed
+        when :linux
+          host.directory path: "/home/#{user}/.rbenv", state: :absent
+        end
       end
     end
 
 
     # setup_my_stuff.rb
-    require 'rbenv.rb'
+    require 'screenplay'
+    require_relative 'rbenv'
 
-    Screenplay.add_scene(RbEnv, host: '10.1.2.3', user: 'george')
+    hosts = { '192.168.0.123' => { user: 'ricky', password: 'ricardo' } }
+
+    Screenplay.sketch(hosts) do |host|
+      host.play_part(RbEnv, user: 'ricky')
+    end
 
 
     # From the shell...
-    $ screenplay setup_my_stuff.rb
+    $ ruby setup_my_stuff.rb
+
+Since this seems useful, there are already some parts that you can use, over in
+{screenplay-parts}[http://github.com/turboladen/screenplay-parts], but feel
+free to write your own!
+
 
 REQUIREMENTS:
 -------------
