@@ -63,15 +63,11 @@ class Screenplay
     end
 
     # @todo Remove checks on attribute equality; Rosh does this internally.
-    def directory(path,
-      state: :exists,
-      owner: nil,
-      group: nil,
-      mode: nil
-      )
+    def directory(path, &block)
       dir = Screenplay::Actors::Directory.new(@host.fs.directory(path),
         @host_changes)
-      result = dir.act(state: state, owner: owner, group: group, mode: mode)
+      result = dir.act(&block)
+      p result
 
       @results << result
     end
@@ -89,6 +85,11 @@ class Screenplay
         contents: contents)
 
       @results << result
+    end
+
+    def package(name,
+      state: :latest
+    )
     end
 
     def shell

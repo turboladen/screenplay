@@ -1,0 +1,10 @@
+---
+- :hostname: localhost
+  :history:
+  - :command: :exec
+    :arguments:
+      :command: uname -a
+    :output: "Darwin sloveless-mbp.local 12.4.0 Darwin Kernel Version 12.4.0: Wed
+      May  1 17:57:12 PDT 2013; root:xnu-2050.24.15~1/RELEASE_X86_64 x86_64\r\n"
+    :exit_status: 0
+    :ssh_output: 

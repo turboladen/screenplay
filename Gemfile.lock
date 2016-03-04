@@ -1,15 +1,3 @@
-GIT
-  remote: git@github.com:turboladen/rosh.git
-  revision: 2aa5b7423f3cbf2d92900dc57e9d1c01a8814f90
-  specs:
-    rosh (0.1.0)
-      awesome_print
-      colorize
-      highline
-      log_switch
-      plist
-      sys-proctable
-
 PATH
   remote: .
   specs:
@@ -17,6 +5,25 @@ PATH
       colorize
       gli
       log_switch
+
+PATH
+  remote: ../rosh
+  specs:
+    rosh (0.1.0)
+      awesome_print
+      colorize
+      highline
+      log_switch
+      net-scp
+      net-ssh
+      plist
+      sys-proctable
+
+PATH
+  remote: ../screenplay-parts
+  specs:
+    screenplay-parts (0.1.0)
+      screenplay
 
 GEM
   remote: https://rubygems.org/
@@ -28,6 +35,9 @@ GEM
     highline (1.6.19)
     log_switch (0.4.0)
     multi_json (1.7.7)
+    net-scp (1.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.6.8)
     plist (3.1.0)
     rake (10.1.0)
     redcarpet (3.0.0)
@@ -64,6 +74,7 @@ DEPENDENCIES
   rosh!
   rspec (>= 2.12.0)
   screenplay!
+  screenplay-parts!
   simplecov
   tailor
   yard (>= 0.7.2)

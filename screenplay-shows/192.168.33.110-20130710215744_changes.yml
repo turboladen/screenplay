@@ -1,0 +1,32 @@
+--- !ruby/object:Screenplay::HostChanges
+changes:
+- :object: !ruby/object:Rosh::Host::FileSystemObjects::RemoteFile
+    path: /var/cache/local/preseeding/mysql-server.seed
+    shell: !ruby/object:Rosh::Host::Shells::Remote
+      hostname: 192.168.33.110
+      user: vagrant
+      options:
+        :keys:
+        - /Users/sloveless.vagrantd/insecure_private_key
+  :attribute: :contents
+  :old: "mysql-server-5.0        mysql-server/root_password_again        select meow\r\nmysql-server-5.0
+    \       mysql-server/root_password      select meow\r\nmysql-server-5.0        mysql-server-5.0/really_downgrade
+    \      boolean false\r\nmysql-server-5.0        mysql-server-5.0/need_sarge_compat
+    \     boolean false\r\nmysql-server-5.0        mysql-server-5.0/start_on_boot
+    \ boolean true\r\nmysql-server-5.0        mysql-server/error_setting_password
+    \    boolean false\r\nmysql-server-5.0        mysql-server-5.0/nis_warning    note\r\nmysql-server-5.0
+    \       mysql-server-5.0/postrm_remove_databases        boolean false\r\nmysql-server-5.0
+    \       mysql-server/password_mismatch  boolean false\r\nmysql-server-5.0        mysql-server-5.0/need_sarge_compat_done
+    boolean true\r\n"
+  :new: |
+    mysql-server-5.0        mysql-server/root_password_again        select meow
+    mysql-server-5.0        mysql-server/root_password      select meow
+    mysql-server-5.0        mysql-server-5.0/really_downgrade       boolean false
+    mysql-server-5.0        mysql-server-5.0/need_sarge_compat      boolean false
+    mysql-server-5.0        mysql-server-5.0/start_on_boot  boolean true
+    mysql-server-5.0        mysql-server/error_setting_password     boolean false
+    mysql-server-5.0        mysql-server-5.0/nis_warning    note
+    mysql-server-5.0        mysql-server-5.0/postrm_remove_databases        boolean false
+    mysql-server-5.0        mysql-server/password_mismatch  boolean false
+    mysql-server-5.0        mysql-server-5.0/need_sarge_compat_done boolean true
+  :as_sudo: true

@@ -1,5 +1,9 @@
 class Screenplay
   module Actors
+
+    # Allows for CRUDing a directory.
+    #
+    #
     class Directory
 
       # @param [Rosh::Host::RemoteDir] rosh_dir
@@ -7,47 +11,33 @@ class Screenplay
       def initialize(rosh_dir, observer)
         @dir = rosh_dir
         @dir.add_observer(observer)
+        @act_options = {}
       end
 
-      # @param [Symbol] state Designate the intended state of the directory.  If
-      #   +:exists+, create it with any options given in +:options+; if
-      #   +:absent+, remove it.
-      # @param [Hash] options
-      # @option options [String] :owner
-      # @option options [String] :group
-      # @option options [String] :mode
-      def act(state=:exists, **options)
-        owner = options[:owner]
-        group = options[:group]
-        mode = options[:mode]
+      def method_missing(meth, *args, **opts, &block)
+        if @dir.respond_to?(meth)
+          @act_options[meth] = {
+            arguments: args,
+            options: opts,
+            block: block
+          }
 
-        case state
-        when :absent
-          @dir.remove if @dir.exists?
-        when :exists
-          @dir.save unless @dir.exists?
-
-          puts "owner: #{@dir.owner}"
-          if owner && @dir.owner != owner
-            @dir.owner = owner
-          end
-
-          puts "group: #{@dir.group}"
-          if group && @dir.group != group
-            @dir.group = group
-          end
-
-          puts "mode: #{@dir.mode}"
-          if mode && @dir.mode != mode
-            @dir.mode = mode
-          end
+          @dir.send(meth, *args, **opts, &block)
         else
-          raise "Unknown state: #{state}"
+          super
+        end
+      end
+
+      def act(&block)
+        if block
+          block.call(self)
+        else
+          @dir.state = :exists
         end
 
         {
           actor: :directory,
-          arguments: options.merge(state: state)
+          arguments: @act_options
         }
       end
     end
