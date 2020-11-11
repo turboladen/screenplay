@@ -21,7 +21,7 @@ GEM
     colorize (0.5.8)
     diff-lcs (1.2.1)
     erubis (2.7.0)
-    ffi (1.4.0)
+    ffi (1.12.2)
     gssapi (1.0.3)
       ffi (>= 1.0.1)
     gyoku (1.0.0)
