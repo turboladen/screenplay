@@ -97,7 +97,7 @@ GEM
       rubyntlm (~> 0.1.1)
       savon (= 0.9.5)
       uuidtools (~> 2.1.2)
-    yard (0.8.5.2)
+    yard (0.9.25)
 
 PLATFORMS
   ruby
