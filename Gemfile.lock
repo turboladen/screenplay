@@ -50,7 +50,7 @@ GEM
     nokogiri (1.5.9)
     nori (1.1.5)
     rack (1.6.13)
-    rake (10.0.3)
+    rake (12.3.3)
     redcarpet (2.2.2)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
